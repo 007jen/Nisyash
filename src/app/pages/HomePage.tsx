@@ -58,53 +58,70 @@ export function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
-          >
-            {/* Dark overlay for better text readability */}
-            <div className="absolute inset-0 bg-black/20" />
-          </motion.div>
-        </AnimatePresence>
+      <section className="relative w-full bg-background pt-20 lg:pt-0">
+        <div className="grid lg:grid-cols-2 min-h-[calc(100vh-80px)]">
+          {/* Text Content */}
+          <div className="flex flex-col justify-center px-6 md:px-12 lg:px-24 py-12 lg:py-0 order-2 lg:order-1 bg-white">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.5 }}
+                className="text-left space-y-6"
+              >
+                <div>
+                  <Badge variant="outline" className="mb-4 text-primary border-primary/20 px-4 py-1 rounded-full">
+                    {currentSlide === 0 ? "Corporate Solutions" : "Personal Gifting"}
+                  </Badge>
+                  <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-primary leading-[1.1]">
+                    {slides[currentSlide].title}
+                  </h1>
+                </div>
 
-        <div className="container mx-auto px-4 relative z-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-3xl mx-auto text-center"
-            >
-              <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
-                <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-md">
-                  {slides[currentSlide].title}
-                </h1>
-                <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-white/90 drop-shadow-md">
+                <h2 className="text-xl md:text-2xl font-medium text-secondary/80">
                   {slides[currentSlide].subtitle}
                 </h2>
-                <p className="text-lg text-white/80 mb-8 leading-relaxed drop-shadow-sm">
+
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
                   {slides[currentSlide].description}
                 </p>
-                <div className="flex flex-wrap gap-4 justify-center">
+
+                <div className="flex flex-wrap gap-4 pt-4">
                   <Link to={slides[currentSlide].ctaLink}>
-                    <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all">
+                    <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 h-auto transition-all rounded-full">
                       {slides[currentSlide].ctaText}
                       <ArrowRight className="ml-2" size={20} />
                     </Button>
                   </Link>
                 </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Image Content */}
+          <div className="relative h-[50vh] lg:h-auto overflow-hidden order-1 lg:order-2 bg-muted">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.7 }}
+                className="absolute inset-0"
+              >
+                <img
+                  src={slides[currentSlide].image}
+                  alt={slides[currentSlide].title}
+                  className="w-full h-full object-cover"
+                />
+
+                {/* Subtle gradient overlay at the bottom for better edge definition if needed */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent lg:hidden" />
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </section>
 
