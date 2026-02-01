@@ -19,7 +19,7 @@ export function ProductPage() {
       <div className="min-h-screen pt-32 pb-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl mb-4">Product Not Found</h1>
-          <Link to="/">
+          <Link to="/home">
             <Button>Back to Home</Button>
           </Link>
         </div>

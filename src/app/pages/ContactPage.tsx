@@ -1,4 +1,6 @@
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { useState } from 'react';
+import { Mail, Phone, MapPin, Clock, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -7,10 +9,13 @@ import { Textarea } from '../components/ui/textarea';
 import { motion } from 'motion/react';
 
 export function ContactPage() {
+  const [submitted, setSubmitted] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real application, this would send data to a backend
-    alert('Message sent successfully!');
+    console.log('Contact form submitted');
+    setSubmitted(true);
   };
 
   const handleWhatsApp = () => {
@@ -28,7 +33,7 @@ export function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-5xl mb-4">Get In Touch</h1>
+            <h1 className="text-3xl md:text-5xl mb-4">Get In Touch</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Have questions about our products or services? We're here to help. Reach out to us through any of the channels below.
             </p>
@@ -121,71 +126,90 @@ export function ContactPage() {
             </Button>
           </motion.div>
 
-          {/* Contact Form */}
+          {/* Contact Form or Success Message */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Card>
-              <CardContent className="p-8">
-                <h2 className="text-3xl mb-6">Send Us a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name *</Label>
-                      <Input id="firstName" placeholder="John" required />
+            {submitted ? (
+              <Card className="h-full flex flex-col justify-center items-center text-center p-8">
+                <CardContent className="space-y-6">
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle className="text-green-600" size={40} />
+                  </div>
+                  <h2 className="text-3xl font-semibold">Message Sent!</h2>
+                  <p className="text-muted-foreground text-lg max-w-sm mx-auto">
+                    Thank you for reaching out. We have received your message and will get back to you within 24 hours.
+                  </p>
+                  <Link to="/home">
+                    <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground mt-4">
+                      Back to Home
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-8">
+                  <h2 className="text-3xl mb-6">Send Us a Message</h2>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name *</Label>
+                        <Input id="firstName" placeholder="John" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name *</Label>
+                        <Input id="lastName" placeholder="Doe" required />
+                      </div>
                     </div>
+
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name *</Label>
-                      <Input id="lastName" placeholder="Doe" required />
+                      <Label htmlFor="contactEmail">Email *</Label>
+                      <Input
+                        id="contactEmail"
+                        type="email"
+                        placeholder="john@company.com"
+                        required
+                      />
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="contactEmail">Email *</Label>
-                    <Input
-                      id="contactEmail"
-                      type="email"
-                      placeholder="john@company.com"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPhone">Phone</Label>
+                      <Input id="contactPhone" type="tel" placeholder="+91 1234567890" />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="contactPhone">Phone</Label>
-                    <Input id="contactPhone" type="tel" placeholder="+91 1234567890" />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="subject">Subject *</Label>
+                      <Input
+                        id="subject"
+                        placeholder="How can we help you?"
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject *</Label>
-                    <Input
-                      id="subject"
-                      placeholder="How can we help you?"
-                      required
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactMessage">Message *</Label>
+                      <Textarea
+                        id="contactMessage"
+                        placeholder="Tell us more about your enquiry..."
+                        rows={6}
+                        required
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="contactMessage">Message *</Label>
-                    <Textarea
-                      id="contactMessage"
-                      placeholder="Tell us more about your enquiry..."
-                      rows={6}
-                      required
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
-                  >
-                    Send Message
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                    >
+                      Send Message
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
           </motion.div>
         </div>
 

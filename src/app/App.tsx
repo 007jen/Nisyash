@@ -9,28 +9,42 @@ import { ProductPage } from './pages/ProductPage';
 import { QuotePage } from './pages/QuotePage';
 import { ContactPage } from './pages/ContactPage';
 import { QuoteProvider } from './context/QuoteContext';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { Toaster } from './components/ui/sonner';
+
+import { ProductsPage } from './pages/ProductsPage';
+import { LandingPage } from './pages/LandingPage';
 
 export default function App() {
   return (
     <QuoteProvider>
       <Router>
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/categories/:categoryId" element={<CategoryPage />} />
-              <Route path="/products/:productId" element={<ProductPage />} />
-              <Route path="/quote" element={<QuotePage />} />
-              <Route path="/contact" element={<ContactPage />} />
-            </Routes>
-          </main>
-          <Footer />
-          <WhatsAppWidget />
-          <Toaster position="top-center" />
-        </div>
+        <Routes>
+          {/* Landing Page: Full screen, no Header/Footer */}
+          <Route path="/" element={<LandingPage />} />
+
+          {/* All other pages: with Header/Footer */}
+          <Route path="/*" element={
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-1">
+                <Routes>
+                  <Route path="/home" element={<HomePage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/categories/:categoryId" element={<CategoryPage />} />
+                  <Route path="/products/:productId" element={<ProductPage />} />
+                  <Route path="/quote" element={<QuotePage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </main>
+              <Footer />
+              <WhatsAppWidget />
+            </div>
+          } />
+        </Routes>
+        <Toaster position="top-center" />
       </Router>
     </QuoteProvider>
   );

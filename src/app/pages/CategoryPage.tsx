@@ -15,7 +15,7 @@ export function CategoryPage() {
       <div className="min-h-screen pt-32 pb-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl mb-4">Category Not Found</h1>
-          <Link to="/">
+          <Link to="/home">
             <Button>Back to Home</Button>
           </Link>
         </div>
@@ -85,7 +85,7 @@ export function CategoryPage() {
               <p className="text-xl text-muted-foreground mb-6">
                 No products found in this category.
               </p>
-              <Link to="/">
+              <Link to="/home">
                 <Button>Explore All Categories</Button>
               </Link>
             </div>

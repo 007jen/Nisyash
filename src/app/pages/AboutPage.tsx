@@ -16,7 +16,7 @@ export function AboutPage() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl"
           >
-            <h1 className="text-5xl mb-6">About Nishyash Corporation</h1>
+            <h1 className="text-3xl md:text-5xl mb-6">About Nishyash Corporation</h1>
             <p className="text-xl text-primary-foreground/90">
               Your trusted partner in creating meaningful corporate and personalised gifting experiences that leave lasting impressions.
             </p>

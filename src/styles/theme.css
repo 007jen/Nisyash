@@ -179,3 +179,9 @@
     line-height: 1.5;
   }
 }
+
+@layer utilities {
+  .font-script {
+    font-family: 'Great Vibes', cursive;
+  }
+}

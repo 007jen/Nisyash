@@ -61,7 +61,7 @@ export function QuotePage() {
                 <p className="text-lg text-muted-foreground mb-8">
                   Your quote request has been successfully submitted. Our team will review your requirements and get back to you within 24 hours.
                 </p>
-                <Link to="/">
+                <Link to="/home">
                   <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                     Back to Home
                   </Button>
@@ -86,7 +86,7 @@ export function QuotePage() {
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
             It looks like you haven't added any products to your quote request yet. Browse our collections to find the perfect gifts.
           </p>
-          <Link to="/">
+          <Link to="/products">
             <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
               Explore Products <ArrowRight className="ml-2" size={18} />
             </Button>
@@ -189,7 +189,7 @@ export function QuotePage() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email *</Label>
                       <Input

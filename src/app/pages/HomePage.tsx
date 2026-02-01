@@ -4,9 +4,10 @@ import { ArrowRight, CheckCircle, Users, Clock, Shield, Star } from 'lucide-reac
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { categories, products, testimonials } from '../data/products';
+import { products, testimonials } from '../data/products';
 import { motion, AnimatePresence } from 'motion/react';
-import Banner from '../../assets/Banner1.jpeg';
+import Banner from '../../assets/Dark.jpeg';
+import GoldenImage from '../../assets/goldenImage.jpg';
 
 // Dynamically import icon components based on category icon name
 const getIcon = (iconName: string) => {
@@ -32,16 +33,16 @@ const slides = [
     subtitle: "Build relationships that last.",
     ctaText: "Request Bulk Quote",
     ctaLink: "/quote",
-    description: "Premium bulk orders for employees, clients, and partners."
+    description: ""
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=2040&auto=format&fit=crop",
+    image: GoldenImage,
     title: "Personalized for Loved Ones",
     subtitle: "Make every occasion special.",
     ctaText: "Shop Collection",
-    ctaLink: "/#products", // Anchor link to products
-    description: "Curated hampers and custom gifts for weddings, festivals, and birthdays."
+    ctaLink: "/products", // Anchor link to products
+    description: ""
   }
 ];
 
@@ -58,69 +59,78 @@ export function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative w-full bg-background pt-20 lg:pt-0">
-        <div className="grid lg:grid-cols-2 min-h-[calc(100vh-80px)]">
+      <section className="relative w-full bg-background pt-24">
+        <div className="flex flex-col">
           {/* Text Content */}
-          <div className="flex flex-col justify-center px-6 md:px-12 lg:px-24 py-12 lg:py-0 order-2 lg:order-1 bg-white">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.5 }}
-                className="text-left space-y-6"
-              >
-                <div>
-                  <Badge variant="outline" className="mb-4 text-primary border-primary/20 px-4 py-1 rounded-full">
-                    {currentSlide === 0 ? "Corporate Solutions" : "Personal Gifting"}
-                  </Badge>
-                  <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-primary leading-[1.1]">
-                    {slides[currentSlide].title}
-                  </h1>
-                </div>
+          <div className="w-full relative z-10 mb-20">
+            <div className="bg-white w-full p-8 md:p-12 transition-all duration-500 hover:bg-[#d4af37]/10 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center space-y-6"
+                >
+                  <div>
+                    {/* <Badge variant="outline" className="mb-4 text-primary border-primary/20 px-4 py-1 rounded-full">
+                      {currentSlide === 0 ? "Corporate Solutions" : "Personal Gifting"}
+                    </Badge> */}
+                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-primary leading-[1.1]">
+                      {slides[currentSlide].title}
+                    </h1>
+                  </div>
 
-                <h2 className="text-xl md:text-2xl font-medium text-secondary/80">
-                  {slides[currentSlide].subtitle}
-                </h2>
+                  <h2 className="text-xl md:text-2xl font-medium text-secondary/80">
+                    {slides[currentSlide].subtitle}
+                  </h2>
 
-                <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
-                  {slides[currentSlide].description}
-                </p>
+                  <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                    {slides[currentSlide].description}
+                  </p>
 
-                <div className="flex flex-wrap gap-4 pt-4">
-                  <Link to={slides[currentSlide].ctaLink}>
-                    <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 h-auto transition-all rounded-full">
-                      {slides[currentSlide].ctaText}
-                      <ArrowRight className="ml-2" size={20} />
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                  <div className="flex flex-wrap gap-4 pt-4 justify-center">
+                    <Link to={slides[currentSlide].ctaLink}>
+                      <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 h-auto transition-all rounded-full min-w-[200px]">
+                        {slides[currentSlide].ctaText}
+                        <ArrowRight className="ml-2" size={20} />
+                      </Button>
+                    </Link>
+                    <Link to="/products">
+                      <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/5 text-lg px-8 py-6 h-auto transition-all rounded-full min-w-[200px]">
+                        Explore Products
+                      </Button>
+                    </Link>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
 
-          {/* Image Content */}
-          <div className="relative h-[50vh] lg:h-auto overflow-hidden order-1 lg:order-2 bg-muted">
+          {/* Image Content (Banner) */}
+          <div className="relative w-full overflow-hidden order-first">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0, scale: 1.1 }}
+                initial={{ opacity: 0, scale: 1.05 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.7 }}
-                className="absolute inset-0"
+                className="relative md:absolute md:inset-0"
               >
                 <img
                   src={slides[currentSlide].image}
                   alt={slides[currentSlide].title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-auto md:h-full md:object-cover"
                 />
 
                 {/* Subtle gradient overlay at the bottom for better edge definition if needed */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent lg:hidden" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent lg:hidden" />
               </motion.div>
             </AnimatePresence>
+            {/* Height placeholder for MD+ screens where content is absolute */}
+            <div className="hidden md:block h-[60vh]" />
           </div>
         </div>
       </section>
@@ -135,7 +145,7 @@ export function HomePage() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl mb-6">About Nishyash Corporation</h2>
+              <h2 className="text-4xl mb-6">About Nishyash Soulfull creation by us </h2>
               <p className="text-lg text-muted-foreground mb-6">
                 We are a leading provider of corporate and personalised gifting solutions, dedicated to helping businesses create lasting impressions. With years of experience in the industry, we understand the importance of quality, customization, and timely delivery.
               </p>
@@ -161,7 +171,7 @@ export function HomePage() {
               viewport={{ once: true }}
             >
               <img
-                src="https://images.unsplash.com/photo-1496180470114-6ef490f3ff22"
+                src="https://placehold.co/600x400/1a1a1a/gold?text=About+Nishyash"
                 alt="About Us"
                 className="rounded-lg shadow-xl"
               />

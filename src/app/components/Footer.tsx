@@ -27,7 +27,7 @@ export function Footer() {
             <h3 className="mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                <Link to="/home" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                   Home
                 </Link>
               </li>

@@ -13,7 +13,7 @@ import {
 } from './ui/navigation-menu';
 import { categories } from '../data/products';
 import { useQuote } from '../context/QuoteContext';
-import Logo from '../../assets/Logo.jpeg';
+import Logo from '../../assets/bgLogo.png';
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,34 +44,34 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-white'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-black shadow-md' : 'bg-black'
         }`}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+      <div className="w-full px-6">
+        <div className="flex items-center justify-between h-24">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <img src={Logo} alt="Nishyash Corporation" className="h-12 w-auto object-contain" />
+          <Link to="/home" className="flex items-center space-x-2">
+            <img src={Logo} alt="Nishyash Corporation" className="h-25 w-auto object-contain" />
             <div className="flex flex-col">
-              <span className="text-xl text-primary">Nishyash</span>
-              <span className="text-xs text-secondary">Corporation</span>
+              <span className="text-3xl sm:text-5xl text-center font-bold text-accent font-script">Nishyash Gift Studio</span>
+              {/* <span className="text-2xl text-accent font-script"></span> */}
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-2">
-            <Link to="/" className={navigationMenuTriggerStyle()}>
+            <Link to="/home" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-lg`}>
               Home
             </Link>
 
-            <Link to="/about" className={navigationMenuTriggerStyle()}>
+            <Link to="/about" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-lg`}>
               About
             </Link>
 
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="!bg-transparent !text-accent hover:!text-white focus:!text-white data-[active]:!text-white data-[state=open]:!text-white !text-lg">Products</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                       {categories.map((category) => (
@@ -98,18 +98,17 @@ export function Header() {
               </NavigationMenuList>
             </NavigationMenu>
 
-            <Link to="/contact" className={navigationMenuTriggerStyle()}>
+            <Link to="/contact" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-primary !text-lg`}>
               Contact
             </Link>
           </div>
 
-          {/* Right Section: Icons & CTA */}
           <div className="hidden lg:flex items-center space-x-6">
-            <button className="text-secondary hover:text-primary transition-colors">
+            <button className="text-accent hover:text-primary transition-colors">
               <Search size={22} />
             </button>
 
-            <Link to="/quote" className="text-secondary hover:text-primary transition-colors relative">
+            <Link to="/quote" className="text-accent hover:text-white transition-colors relative">
               <ShoppingBag size={22} />
               {quoteCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
@@ -127,7 +126,7 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-secondary"
+            className="lg:hidden text-accent"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -140,28 +139,28 @@ export function Header() {
           <div className="lg:hidden py-4 border-t border-border h-[calc(100vh-80px)] overflow-y-auto">
             <nav className="flex flex-col space-y-4 pb-20">
               <Link
-                to="/"
-                className="text-secondary hover:text-primary transition-colors py-2 font-medium"
+                to="/home"
+                className="text-accent hover:text-white transition-colors py-2 font-medium text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 to="/about"
-                className="text-secondary hover:text-primary transition-colors py-2 font-medium"
+                className="text-accent hover:text-white transition-colors py-2 font-medium text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 About
               </Link>
 
               <div className="py-2">
-                <span className="text-secondary font-semibold block mb-2">Products</span>
+                <span className="text-accent font-semibold block mb-2 text-lg">Products</span>
                 <div className="pl-4 border-l-2 border-muted space-y-3">
                   {categories.map((category) => (
                     <Link
                       key={category.id}
                       to={`/categories/${category.id}`}
-                      className="block text-sm text-secondary hover:text-primary transition-colors"
+                      className="block text-accent hover:text-white transition-colors text-lg"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {category.name}
@@ -172,14 +171,14 @@ export function Header() {
 
               <Link
                 to="/contact"
-                className="text-secondary hover:text-primary transition-colors py-2 font-medium"
+                className="text-accent hover:text-white transition-colors py-2 font-medium text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Contact
               </Link>
 
               <div className="pt-4 border-t border-muted">
-                <Link to="/quote" className="flex items-center space-x-2 text-secondary py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/quote" className="flex items-center space-x-2 text-accent py-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <ShoppingBag size={20} />
                   <span>Quote Cart ({quoteCount})</span>
                 </Link>
