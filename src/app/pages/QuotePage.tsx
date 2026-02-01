@@ -11,6 +11,7 @@ import { useQuote } from '../context/QuoteContext';
 
 export function QuotePage() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { items, removeFromQuote, clearQuote } = useQuote();
 
   const [formData, setFormData] = useState({
@@ -21,11 +22,16 @@ export function QuotePage() {
     additionalNotes: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Prepare the full payload
+    setIsSubmitting(true);
+
     const submissionData = {
-      ...formData,
+      fullName: formData.name, // Mapping frontend names to DB schema names
+      companyName: formData.companyName,
+      email: formData.email,
+      phone: formData.phone,
+      additionalNotes: formData.additionalNotes,
       items: items.map(item => ({
         id: item.id,
         name: item.name,
@@ -33,9 +39,26 @@ export function QuotePage() {
       }))
     };
 
-    console.log('Quote Request Submitted:', submissionData);
-    setSubmitted(true);
-    clearQuote(); // Optional: clear cart after submit
+    try {
+      const response = await fetch('http://localhost:5000/api/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submissionData),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        clearQuote();
+      } else {
+        const err = await response.json();
+        alert(`Error: ${err.error || 'Failed to submit quote'}`);
+      }
+    } catch (error) {
+      console.error('Quote submission error:', error);
+      alert('Could not connect to the server. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -228,9 +251,10 @@ export function QuotePage() {
                   <Button
                     type="submit"
                     size="lg"
+                    disabled={isSubmitting}
                     className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
                   >
-                    Submit Request
+                    {isSubmitting ? 'Processing Quote...' : 'Submit Request'}
                   </Button>
 
                   <p className="text-xs text-muted-foreground text-center">

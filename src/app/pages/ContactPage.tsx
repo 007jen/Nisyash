@@ -10,12 +10,34 @@ import { motion } from 'motion/react';
 
 export function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, this would send data to a backend
-    console.log('Contact form submitted');
-    setSubmitted(true);
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('http://localhost:5000/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        const err = await response.json();
+        alert(`Error: ${err.error || 'Failed to submit'}`);
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('Could not connect to the server. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleWhatsApp = () => {
@@ -202,9 +224,10 @@ export function ContactPage() {
                     <Button
                       type="submit"
                       size="lg"
+                      disabled={isSubmitting}
                       className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
                     >
-                      Send Message
+                      {isSubmitting ? 'Sending Message...' : 'Send Message'}
                     </Button>
                   </form>
                 </CardContent>
