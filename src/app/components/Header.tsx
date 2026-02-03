@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+  useUser,
+} from "@clerk/clerk-react";
 import { Menu, X, Search, ShoppingBag, Briefcase, Heart, Gift, Shirt, Coffee, FolderOpen, Award, Leaf } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -11,24 +19,80 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from './ui/navigation-menu';
-import { categories } from '../data/products';
 import { useQuote } from '../context/QuoteContext';
 import Logo from '../../assets/bgLogo.png';
+
+interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+}
+
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const { quoteCount } = useQuote();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const { user } = useUser();
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+  const isAdmin = user?.primaryEmailAddress?.emailAddress === adminEmail;
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
     };
 
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${apiBaseUrl}/api/categories`);
+        if (res.status === 429) {
+          toast.error("Rate limit exceeded. Please wait a moment.");
+          return;
+        }
+        if (res.ok) {
+          const data = await res.json();
+          setCategories(data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories for header:', error);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
+    fetchCategories();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const getCategoryIcon = (iconName: string) => {
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (searchQuery.length > 1) {
+        setIsSearching(true);
+        try {
+          const res = await fetch(`${apiBaseUrl}/api/search?q=${searchQuery}`);
+          if (res.ok) {
+            const data = await res.json();
+            setSearchResults(data);
+          }
+        } catch (error) {
+          console.error('Search error:', error);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const getCategoryIcon = (iconName?: string) => {
+    if (!iconName) return <Gift size={20} />;
     switch (iconName) {
       case 'Briefcase': return <Briefcase size={20} />;
       case 'Heart': return <Heart size={20} />;
@@ -85,9 +149,11 @@ export function Header() {
                                 {getCategoryIcon(category.icon)}
                                 {category.name}
                               </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                {category.description}
-                              </p>
+                              {category.description && (
+                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                  {category.description}
+                                </p>
+                              )}
                             </Link>
                           </NavigationMenuLink>
                         </li>
@@ -101,12 +167,62 @@ export function Header() {
             <Link to="/contact" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-primary !text-lg`}>
               Contact
             </Link>
+
+            {isAdmin && (
+              <Link to="/admin" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-primary !text-lg`}>
+                Admin
+              </Link>
+            )}
           </div>
 
           <div className="hidden lg:flex items-center space-x-6">
-            <button className="text-accent hover:text-primary transition-colors">
-              <Search size={22} />
-            </button>
+            <div className="relative group/search">
+              <div className="flex items-center bg-accent/5 border border-accent/20 rounded-full px-3 py-1.5 focus-within:border-accent/50 transition-all">
+                <Search size={18} className="text-accent mr-2" />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="bg-transparent border-none outline-none text-sm text-white placeholder:text-accent/50 w-40 focus:w-64 transition-all duration-300"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              {/* Search Results Dropdown */}
+              {(searchQuery.length > 1) && (
+                <div className="absolute top-full right-0 mt-2 w-80 bg-black border border-accent/20 rounded-lg shadow-2xl overflow-hidden z-[60]">
+                  {isSearching ? (
+                    <div className="p-4 text-center text-sm text-accent">Searching...</div>
+                  ) : searchResults.length > 0 ? (
+                    <div className="max-h-96 overflow-y-auto">
+                      {searchResults.map((item) => (
+                        <Link
+                          key={item.id}
+                          to={`/products/${item.id}`}
+                          className="flex items-center gap-3 p-3 hover:bg-accent/10 transition-colors border-b border-accent/5"
+                          onClick={() => setSearchQuery('')}
+                        >
+                          <div className="w-10 h-10 bg-muted rounded overflow-hidden flex-shrink-0">
+                            <img
+                              src={item.image?.startsWith('/uploads') ? `${apiBaseUrl}${item.image}` : item.image || 'https://placehold.co/100x100?text=No+Image'}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{item.name}</p>
+                            <p className="text-xs text-accent/70 truncate">{item.category?.name}</p>
+                          </div>
+                          <p className="text-xs font-bold text-accent">₹{item.price}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-accent/50">No products found</div>
+                  )}
+                </div>
+              )}
+            </div>
 
             <Link to="/quote" className="text-accent hover:text-white transition-colors relative">
               <ShoppingBag size={22} />
@@ -122,6 +238,21 @@ export function Header() {
                 Get a Quote
               </Button>
             </Link>
+
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
+                  Login
+                </Button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton appearance={{
+                elements: {
+                  userButtonAvatarBox: "w-10 h-10"
+                }
+              }} />
+            </SignedIn>
           </div>
 
           {/* Mobile Menu Button */}
@@ -137,7 +268,49 @@ export function Header() {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-border h-[calc(100vh-80px)] overflow-y-auto">
-            <nav className="flex flex-col space-y-4 pb-20">
+            <nav className="flex flex-col space-y-4 pb-20 px-4">
+              {/* Mobile Search Bar */}
+              <div className="relative mt-2 mb-4">
+                <div className="flex items-center bg-accent/10 border border-accent/20 rounded-lg px-3 py-2 focus-within:border-accent/50 transition-all">
+                  <Search size={18} className="text-accent mr-2" />
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    className="bg-transparent border-none outline-none text-sm text-white placeholder:text-accent/50 w-full"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+
+                {/* Mobile Search Results */}
+                {searchQuery.length > 1 && searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-accent/20 rounded-md shadow-xl z-50 max-h-60 overflow-y-auto">
+                    {searchResults.map((item) => (
+                      <Link
+                        key={item.id}
+                        to={`/products/${item.id}`}
+                        className="flex items-center gap-3 p-3 hover:bg-accent/10 border-b border-accent/5"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        <div className="w-8 h-8 bg-muted rounded overflow-hidden flex-shrink-0">
+                          <img
+                            src={item.image?.startsWith('/uploads') ? `${apiBaseUrl}${item.image}` : item.image || 'https://placehold.co/100x100?text=No+Image'}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-white truncate">{item.name}</p>
+                        </div>
+                        <p className="text-[10px] font-bold text-accent">₹{item.price}</p>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
               <Link
                 to="/home"
                 className="text-accent hover:text-white transition-colors py-2 font-medium text-lg"
@@ -176,6 +349,16 @@ export function Header() {
               >
                 Contact
               </Link>
+
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="text-red-500 hover:text-red-400 transition-colors py-2 font-bold text-lg border-t border-red-500/10"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Admin Panel
+                </Link>
+              )}
 
               <div className="pt-4 border-t border-muted">
                 <Link to="/quote" className="flex items-center space-x-2 text-accent py-2" onClick={() => setIsMobileMenuOpen(false)}>

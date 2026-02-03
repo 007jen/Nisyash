@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, CheckCircle, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -11,6 +11,7 @@ import { motion } from 'motion/react';
 export function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +21,7 @@ export function ContactPage() {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch('http://localhost:5000/api/leads', {
+      const response = await fetch(`${apiBaseUrl}/api/leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -41,10 +42,11 @@ export function ContactPage() {
   };
 
   const handleWhatsApp = () => {
-    const phoneNumber = '911234567890';
+    const phoneNumber = '9892000592';
     const message = encodeURIComponent('Hi, I would like to get in touch with Nishyash Corporation.');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
+
 
   return (
     <div className="min-h-screen pt-32 pb-20">
@@ -79,8 +81,8 @@ export function ContactPage() {
                     </div>
                     <div>
                       <h3 className="mb-2">Email Us</h3>
-                      <p className="text-muted-foreground">info@nishyash.com</p>
-                      <p className="text-muted-foreground">sales@nishyash.com</p>
+                      <p className="text-muted-foreground">soulfulcreations@nishyash.com</p>
+                      {/* <p className="text-muted-foreground">[EMAIL_ADDRESS]</p> */}
                     </div>
                   </div>
                 </CardContent>
@@ -94,8 +96,8 @@ export function ContactPage() {
                     </div>
                     <div>
                       <h3 className="mb-2">Call Us</h3>
-                      <p className="text-muted-foreground">+91 1234 567 890</p>
-                      <p className="text-muted-foreground">+91 9876 543 210</p>
+                      <p className="text-muted-foreground">+91 98920 00592</p>
+                      {/* <p className="text-muted-foreground">+91 9876 543 210</p> */}
                     </div>
                   </div>
                 </CardContent>
@@ -120,32 +122,31 @@ export function ContactPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-green-500/20 bg-green-500/5">
                 <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Clock className="text-accent" size={24} />
+                  <div className="flex flex-col space-y-4">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <MessageCircle className="text-green-600" size={24} />
+                      </div>
+                      <div>
+                        <h3 className="mb-1">Instant Support</h3>
+                        <p className="text-sm text-muted-foreground">Chat with us directly on WhatsApp for quick queries.</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="mb-2">Business Hours</h3>
-                      <p className="text-muted-foreground">
-                        Monday - Friday: 9:00 AM - 6:00 PM<br />
-                        Saturday: 10:00 AM - 4:00 PM<br />
-                        Sunday: Closed
-                      </p>
-                    </div>
+                    <Button
+                      size="lg"
+                      className="w-full bg-green-500 hover:bg-green-600 text-white"
+                      onClick={handleWhatsApp}
+                    >
+                      <MessageCircle className="mr-2" size={20} />
+                      Chat on WhatsApp
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
-            </div>
 
-            <Button
-              size="lg"
-              className="w-full bg-green-500 hover:bg-green-600"
-              onClick={handleWhatsApp}
-            >
-              Chat on WhatsApp
-            </Button>
+            </div>
           </motion.div>
 
           {/* Contact Form or Success Message */}
@@ -179,18 +180,19 @@ export function ContactPage() {
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName">First Name *</Label>
-                        <Input id="firstName" placeholder="John" required />
+                        <Input id="firstName" name="firstName" placeholder="John" required />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name *</Label>
-                        <Input id="lastName" placeholder="Doe" required />
+                        <Input id="lastName" name="lastName" placeholder="Doe" required />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="contactEmail">Email *</Label>
+                      <Label htmlFor="email">Email *</Label>
                       <Input
-                        id="contactEmail"
+                        id="email"
+                        name="email"
                         type="email"
                         placeholder="john@company.com"
                         required
@@ -198,23 +200,25 @@ export function ContactPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="contactPhone">Phone</Label>
-                      <Input id="contactPhone" type="tel" placeholder="+91 1234567890" />
+                      <Label htmlFor="phone">Phone</Label>
+                      <Input id="phone" name="phone" type="number" placeholder="+91 1234567890" />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="subject">Subject *</Label>
                       <Input
                         id="subject"
+                        name="subject"
                         placeholder="How can we help you?"
                         required
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="contactMessage">Message *</Label>
+                      <Label htmlFor="message">Message *</Label>
                       <Textarea
-                        id="contactMessage"
+                        id="message"
+                        name="message"
                         placeholder="Tell us more about your enquiry..."
                         rows={6}
                         required

@@ -1,5 +1,15 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import { Product } from '../data/products';
+interface Product {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    image: string;
+    inStock: boolean;
+    category?: {
+        name: string;
+    };
+}
 import { toast } from 'sonner';
 
 export interface QuoteItem extends Product {

@@ -1,18 +1,72 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Seo } from '../components/SEO';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { CheckCircle, MessageCircle, ShoppingBag, Plus, Minus } from 'lucide-react';
-import { products } from '../data/products';
+import { CheckCircle, MessageCircle, ShoppingBag, Plus, Minus, Loader2 } from 'lucide-react';
 import { useQuote } from '../context/QuoteContext';
 import { motion } from 'motion/react';
 
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  inStock: boolean;
+  categoryId: string;
+  tags?: string[];
+}
+
 export function ProductPage() {
   const { productId } = useParams<{ productId: string }>();
-  const product = products.find((p) => p.id === productId);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const { addToQuote } = useQuote();
-  const [quantity, setQuantity] = useState(50);
+  const [quantity, setQuantity] = useState(1);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`${apiBaseUrl}/api/products`);
+        if (res.ok) {
+          const allData: Product[] = await res.json();
+          const p = allData.find(item => item.id === productId);
+          if (p) {
+            setProduct(p);
+            setQuantity(1);
+
+            // Fetch related products from the new endpoint
+            try {
+              const relatedRes = await fetch(`${apiBaseUrl}/api/products/${p.id}/related`);
+              if (relatedRes.ok) {
+                const relatedData = await relatedRes.json();
+                setRelatedProducts(relatedData);
+              }
+            } catch (error) {
+              console.error('Error fetching related products:', error);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (productId) fetchProduct();
+  }, [productId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center">
+        <Loader2 className="animate-spin text-accent" size={48} />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -54,6 +108,11 @@ export function ProductPage() {
 
   return (
     <div className="min-h-screen pt-32 pb-20">
+      <Seo
+        title={product.name}
+        description={product.description}
+        keywords={product.tags}
+      />
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 mb-12">
           {/* Product Image */}
@@ -63,7 +122,7 @@ export function ProductPage() {
             transition={{ duration: 0.6 }}
           >
             <img
-              src={product.image}
+              src={product.image?.startsWith('/uploads') ? `${apiBaseUrl}${product.image}` : product.image || 'https://placehold.co/600x400?text=No+Image'}
               alt={product.name}
               className="w-full rounded-lg shadow-xl"
             />
@@ -76,11 +135,13 @@ export function ProductPage() {
             transition={{ duration: 0.6 }}
           >
             <div className="mb-4">
-              {product.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="mr-2">
-                  {tag}
+              {product.inStock ? (
+                <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+                  In Stock
                 </Badge>
-              ))}
+              ) : (
+                <Badge variant="destructive">Out of Stock</Badge>
+              )}
             </div>
             <h1 className="text-4xl mb-4">{product.name}</h1>
             <p className="text-lg text-muted-foreground mb-8">{product.description}</p>
@@ -107,7 +168,7 @@ export function ProductPage() {
                 <div className="flex items-center border rounded-md">
                   <button
                     className="p-2 hover:bg-muted"
-                    onClick={() => setQuantity(Math.max(50, quantity - 10))}
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   >
                     <Minus size={16} />
                   </button>
@@ -115,12 +176,12 @@ export function ProductPage() {
                     type="number"
                     className="w-20 text-center border-none focus:ring-0 p-1"
                     value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    min="50"
+                    onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+                    min="1"
                   />
                   <button
                     className="p-2 hover:bg-muted"
-                    onClick={() => setQuantity(quantity + 10)}
+                    onClick={() => setQuantity(quantity + 1)}
                   >
                     <Plus size={16} />
                   </button>
@@ -198,29 +259,31 @@ export function ProductPage() {
         >
           <h2 className="text-3xl mb-8">Related Products</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products
-              .filter((p) => p.category === product.category && p.id !== product.id)
-              .slice(0, 4)
-              .map((relatedProduct) => (
-                <Link key={relatedProduct.id} to={`/products/${relatedProduct.id}`}>
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            {relatedProducts.map((relatedProduct) => (
+              <Link key={relatedProduct.id} to={`/products/${relatedProduct.id}`}>
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
+                  <div className="h-48 overflow-hidden bg-muted">
                     <img
-                      src={relatedProduct.image}
+                      src={relatedProduct.image?.startsWith('/uploads') ? `${apiBaseUrl}${relatedProduct.image}` : relatedProduct.image || 'https://placehold.co/600x400?text=No+Image'}
                       alt={relatedProduct.name}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <CardContent className="p-4">
-                      <h3 className="mb-2 line-clamp-1">{relatedProduct.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                        {relatedProduct.description}
-                      </p>
-                      <Button variant="outline" size="sm" className="w-full">
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="mb-2 line-clamp-1">{relatedProduct.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {relatedProduct.description}
+                    </p>
+                    <div className="flex justify-between items-center mt-auto">
+                      <span className="font-bold text-accent">₹{relatedProduct.price}</span>
+                      <Button variant="outline" size="sm">
                         View Details
                       </Button>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
         </motion.div>
       </div >

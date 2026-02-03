@@ -18,6 +18,29 @@ model Lead {
     updatedAt DateTime @updatedAt
 }
 
+model Category {
+    id          String    @id
+    name        String    @unique
+    description String?
+    icon        String?
+    products    Product[]
+}
+
+model Product {
+    id              String   @id @default(cuid())
+    name            String
+    description     String?
+    price           Float
+    image           String? // path to the uploaded image
+    inStock         Boolean  @default(true)
+    defaultQuantity Int      @default(1)
+    category        Category @relation(fields: [categoryId], references: [id])
+    categoryId      String
+    tags            String[]
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+}
+
 model QuoteRequest {
     id              String      @id @default(cuid())
     fullName        String

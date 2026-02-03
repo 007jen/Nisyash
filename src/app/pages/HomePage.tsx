@@ -3,11 +3,19 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Users, Clock, Shield, Star } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { products, testimonials } from '../data/products';
 import { motion, AnimatePresence } from 'motion/react';
+import { testimonials } from '../data/products';
 import Banner from '../../assets/Dark.jpeg';
 import GoldenImage from '../../assets/goldenImage.jpg';
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  inStock: boolean;
+}
 
 // Dynamically import icon components based on category icon name
 const getIcon = (iconName: string) => {
@@ -48,6 +56,26 @@ const slides = [
 
 export function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${apiBaseUrl}/api/products`);
+        if (res.ok) {
+          const data = await res.json();
+          setFeaturedProducts(data.slice(0, 4));
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -145,7 +173,7 @@ export function HomePage() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl mb-6">About Nishyash Soulfull creation by us </h2>
+              <h2 className="text-4xl mb-6">About Nishyash </h2>
               <p className="text-lg text-muted-foreground mb-6">
                 We are a leading provider of corporate and personalised gifting solutions, dedicated to helping businesses create lasting impressions. With years of experience in the industry, we understand the importance of quality, customization, and timely delivery.
               </p>
@@ -252,7 +280,7 @@ export function HomePage() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.slice(0, 4).map((product, index) => (
+            {featuredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -261,33 +289,36 @@ export function HomePage() {
                 viewport={{ once: true }}
               >
                 <Link to={`/products/${product.id}`}>
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-48 object-cover"
-                    />
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
+                    <div className="h-48 overflow-hidden bg-muted">
+                      <img
+                        src={product.image?.startsWith('/uploads') ? `${apiBaseUrl}${product.image}` : product.image || 'https://placehold.co/600x400?text=No+Image'}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
                     <CardContent className="p-4">
                       <h3 className="mb-2 line-clamp-1">{product.name}</h3>
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                         {product.description}
                       </p>
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {product.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
+                      <div className="flex justify-between items-center mt-auto">
+                        <span className="font-bold text-accent">₹{product.price}</span>
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
                       </div>
-                      <Button variant="outline" size="sm" className="w-full">
-                        Request Quote
-                      </Button>
                     </CardContent>
                   </Card>
                 </Link>
               </motion.div>
             ))}
           </div>
+          {!loading && featuredProducts.length === 0 && (
+            <div className="text-center py-10 text-muted-foreground">
+              New products coming soon!
+            </div>
+          )}
         </div>
       </section>
 

@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { WhatsAppWidget } from './components/WhatsAppWidget';
+import ScrollToTop from './components/ScrollToTop';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
 import { CategoryPage } from './pages/CategoryPage';
@@ -14,11 +15,13 @@ import { Toaster } from './components/ui/sonner';
 
 import { ProductsPage } from './pages/ProductsPage';
 import { LandingPage } from './pages/LandingPage';
+import AdminPage from './pages/AdminPage';
 
 export default function App() {
   return (
     <QuoteProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Landing Page: Full screen, no Header/Footer */}
           <Route path="/" element={<LandingPage />} />
@@ -36,6 +39,7 @@ export default function App() {
                   <Route path="/products/:productId" element={<ProductPage />} />
                   <Route path="/quote" element={<QuotePage />} />
                   <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/admin" element={<AdminPage />} /> {/* Added AdminPage route */}
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </main>

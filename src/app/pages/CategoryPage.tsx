@@ -1,14 +1,58 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Badge } from '../components/ui/badge';
+import { Seo } from '../components/SEO';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { categories, products } from '../data/products';
 import { motion } from 'motion/react';
+import { Loader2 } from 'lucide-react';
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  inStock: boolean;
+  tags?: string[];
+}
+
+interface Category {
+  id: string;
+  name: string;
+  products?: Product[];
+}
 
 export function CategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const category = categories.find((c) => c.id === categoryId);
-  const categoryProducts = products.filter((p) => p.category === categoryId);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [loading, setLoading] = useState(true);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const res = await fetch(`${apiBaseUrl}/api/categories`);
+        if (res.ok) {
+          const data: Category[] = await res.json();
+          const found = data.find(c => c.id === categoryId);
+          if (found) setCategory(found);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (categoryId) fetchCategory();
+  }, [categoryId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center">
+        <Loader2 className="animate-spin text-accent" size={48} />
+      </div>
+    );
+  }
 
   if (!category) {
     return (
@@ -25,6 +69,10 @@ export function CategoryPage() {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title={category.name}
+        description={`Explore our selection of ${category.name}. Premium corporate and personalised gifts.`}
+      />
       {/* Category Hero */}
       <section className="bg-gradient-to-br from-primary to-secondary text-primary-foreground pt-32 pb-12">
         <div className="container mx-auto px-4">
@@ -35,7 +83,6 @@ export function CategoryPage() {
             className="max-w-3xl"
           >
             <h1 className="text-5xl mb-4">{category.name}</h1>
-            <p className="text-xl text-primary-foreground/90">{category.description}</p>
           </motion.div>
         </div>
       </section>
@@ -43,9 +90,9 @@ export function CategoryPage() {
       {/* Products Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          {categoryProducts.length > 0 ? (
+          {category.products && category.products.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {categoryProducts.map((product, index) => (
+              {category.products.map((product, index) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -54,26 +101,24 @@ export function CategoryPage() {
                 >
                   <Link to={`/products/${product.id}`}>
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-56 object-cover"
-                      />
+                      <div className="h-56 overflow-hidden bg-muted">
+                        <img
+                          src={product.image?.startsWith('/uploads') ? `${apiBaseUrl}${product.image}` : product.image || 'https://placehold.co/600x400?text=No+Image'}
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
                       <CardContent className="p-6 flex-1 flex flex-col">
                         <h3 className="mb-2">{product.name}</h3>
                         <p className="text-sm text-muted-foreground mb-4 flex-1">
                           {product.description}
                         </p>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {product.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
+                        <div className="flex justify-between items-center mt-auto">
+                          <span className="font-bold text-accent">₹{product.price}</span>
+                          <Button variant="outline" size="sm">
+                            View Details
+                          </Button>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full">
-                          View Details
-                        </Button>
                       </CardContent>
                     </Card>
                   </Link>
