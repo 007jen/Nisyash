@@ -5,7 +5,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/
 
 export function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const phoneNumber = '911234567890'; // Replace with actual WhatsApp number
+  const rawNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '9082035278';
+  const cleanNumber = rawNumber.replace(/\D/g, '');
+  const phoneNumber = cleanNumber.startsWith('91') ? cleanNumber : `91${cleanNumber}`;
 
   const quickActions = [
     { text: 'Get a quotation', message: 'Hi, I would like to get a quotation for corporate gifts.' },
