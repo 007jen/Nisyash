@@ -1,32 +1,38 @@
-import nodemailer from "nodemailer";
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+const getResend = () => {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+        return null;
     }
-})
+    return new Resend(apiKey);
+};
 
 export const sendNotificationEmail = async (subject: string, html: string) => {
-    console.log(`[Mailer] Attempting to send email: "${subject}"...`);
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.error("[Mailer] Missing EMAIL_USER or EMAIL_PASS in environment.");
+    console.log(`[Mailer] Attempting to send email via Resend: "${subject}"...`);
+
+    const resend = getResend();
+    if (!resend) {
+        console.error("[Mailer] Missing RESEND_API_KEY in environment. Email not sent.");
         return;
     }
 
     try {
-        const info = await transporter.sendMail({
-            from: `"Nisyash Corporation" <${process.env.EMAIL_USER}>`,
-            to: process.env.EMAIL_USER,
+        const { data, error } = await resend.emails.send({
+            from: 'Nisyash Corporation <onboarding@resend.dev>',
+            to: process.env.EMAIL_USER || 'jajoshi2005@gmail.com',
             subject: subject,
-            html: html
+            html: html,
         });
-        console.log(`[Mailer] Email sent successfully: ${info.messageId}`);
+
+        if (error) {
+            console.error("[Mailer] Resend API error:", error);
+            throw error;
+        }
+
+        console.log(`[Mailer] Email sent successfully via Resend. ID: ${data?.id}`);
     } catch (error) {
         console.error("[Mailer] Critical error sending email:", error);
-        throw error; // Rethrow so the caller's .catch can also log it
+        throw error;
     }
 };
