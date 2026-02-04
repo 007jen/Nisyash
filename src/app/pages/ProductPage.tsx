@@ -4,9 +4,18 @@ import { Seo } from '../components/SEO';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { CheckCircle, MessageCircle, ShoppingBag, Plus, Minus, Loader2 } from 'lucide-react';
+import { CheckCircle, MessageCircle, ShoppingBag, Plus, Minus, Loader2, Mail, Info } from 'lucide-react';
 import { useQuote } from '../context/QuoteContext';
 import { motion } from 'motion/react';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
 
 interface Product {
   id: string;
@@ -145,13 +154,22 @@ export function ProductPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="mb-4">
+            <div className="mb-6">
               {product.inStock ? (
                 <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+                  <CheckCircle size={14} className="mr-1" />
                   In Stock
                 </Badge>
               ) : (
-                <Badge variant="destructive">Out of Stock</Badge>
+                <div className="space-y-4">
+                  <Badge variant="destructive" className="animate-pulse">Out of Stock</Badge>
+                  <Alert variant="destructive" className="bg-destructive/5 border-destructive/20">
+                    <Info className="h-4 w-4" />
+                    <AlertDescription className="font-medium">
+                      Product is out of stock it will restocked soon
+                    </AlertDescription>
+                  </Alert>
+                </div>
               )}
             </div>
             <h1 className="text-4xl mb-4">{product.name}</h1>
@@ -200,24 +218,68 @@ export function ProductPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button
-                  size="lg"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground w-full"
-                  onClick={() => addToQuote(product, quantity)}
-                >
-                  <ShoppingBag className="mr-2" size={20} />
-                  Add to Quote
-                </Button>
+                {product.inStock ? (
+                  <>
+                    <Button
+                      size="lg"
+                      className="bg-accent hover:bg-accent/90 text-accent-foreground w-full"
+                      onClick={() => addToQuote(product, quantity)}
+                    >
+                      <ShoppingBag className="mr-2" size={20} />
+                      Add to Quote
+                    </Button>
 
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleWhatsApp}
-                >
-                  <MessageCircle className="mr-2" size={20} />
-                  WhatsApp
-                </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleWhatsApp}
+                    >
+                      <MessageCircle className="mr-2" size={20} />
+                      WhatsApp
+                    </Button>
+                  </>
+                ) : (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="lg"
+                        className="bg-accent hover:bg-accent/90 text-accent-foreground w-full col-span-full"
+                      >
+                        <MessageCircle className="mr-2" size={20} />
+                        Inquire Now
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Product Inquiry</DialogTitle>
+                        <DialogDescription>
+                          This product is currently out of stock. How would you like to contact us?
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid grid-cols-1 gap-4 py-4">
+                        <Button
+                          onClick={handleWhatsApp}
+                          className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white"
+                        >
+                          <MessageCircle className="mr-2" size={20} />
+                          Chat on WhatsApp (Fastest)
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            const email = (import.meta.env.VITE_ADMIN_EMAIL || '').split(',')[0].trim();
+                            window.location.href = `mailto:${email}?subject=Product Inquiry: ${product.name}&body=Hi, I am interested in ${product.name} which is currently out of stock. Please let me know when it will be restocked.`;
+                          }}
+                          className="w-full"
+                        >
+                          <Mail className="mr-2" size={20} />
+                          Send an Email
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
             </div>
 
