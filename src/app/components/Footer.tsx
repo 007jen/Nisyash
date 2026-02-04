@@ -108,3 +108,4 @@ export function Footer() {
     </footer>
   );
 }
+console.log("wake up render");
