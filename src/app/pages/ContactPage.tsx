@@ -43,8 +43,8 @@ export function ContactPage() {
 
   const handleWhatsApp = () => {
     const rawNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '9082035278';
-    const phoneNumber = rawNumber.replace(/\D/g, '');
-    const formattedNumber = phoneNumber.startsWith('91') ? phoneNumber : `91${phoneNumber}`;
+    const cleanNumber = rawNumber.replace(/\D/g, '');
+    const formattedNumber = cleanNumber.startsWith('91') ? cleanNumber : `91${cleanNumber}`;
     const message = encodeURIComponent('Hi, I would like to get in touch with Nishyash Corporation.');
     window.open(`https://wa.me/${formattedNumber}?text=${message}`, '_blank');
   };
@@ -98,7 +98,7 @@ export function ContactPage() {
                     <div>
                       <h3 className="mb-2">Call Us</h3>
                       <p className="text-muted-foreground">
-                        {import.meta.env.VITE_WHATSAPP_NUMBER ? `+91 ${import.meta.env.VITE_WHATSAPP_NUMBER}` : '+91 98920 00592'}
+                        {import.meta.env.VITE_WHATSAPP_NUMBER ? `+91 ${import.meta.env.VITE_WHATSAPP_NUMBER}` : '+91 90820 35278'}
                       </p>
                     </div>
                   </div>
