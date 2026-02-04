@@ -112,13 +112,13 @@ export function Header() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-black shadow-md' : 'bg-black'
         }`}
     >
-      <div className="w-full px-6">
-        <div className="flex items-center justify-between h-24">
+      <div className="w-full px-4 sm:px-6">
+        <div className="flex items-center justify-between h-16 sm:h-20 lg:h-24">
           {/* Logo */}
-          <Link to="/home" className="flex items-center space-x-2">
-            <img src={Logo} alt="Nishyash Corporation" className="h-25 w-auto object-contain" />
-            <div className="flex flex-col">
-              <span className="text-3xl sm:text-5xl text-center font-bold text-accent font-script">Nishyash Gift Studio</span>
+          <Link to="/home" className="flex items-center space-x-2 flex-shrink min-w-0">
+            <img src={Logo} alt="Nishyash Corporation" className="h-10 sm:h-16 lg:h-25 w-auto object-contain flex-shrink-0" />
+            <div className="flex flex-col min-w-0 overflow-visible">
+              <span className="text-base sm:text-2xl lg:text-5xl font-bold text-accent font-script whitespace-nowrap leading-relaxed">Nishyash Gift Studio</span>
               {/* <span className="text-2xl text-accent font-script"></span> */}
             </div>
           </Link>
