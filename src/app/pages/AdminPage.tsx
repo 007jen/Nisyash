@@ -127,8 +127,10 @@ export default function AdminPage() {
 
     useEffect(() => {
         if (isLoaded && isSignedIn && user) {
-            const userEmail = user.primaryEmailAddress?.emailAddress;
-            if (userEmail !== adminEmail) {
+            const userEmail = user.primaryEmailAddress?.emailAddress?.toLowerCase() || '';
+            const adminEmails = (import.meta.env.VITE_ADMIN_EMAIL || '').split(',').map((e: string) => e.trim().toLowerCase());
+
+            if (!adminEmails.includes(userEmail)) {
                 toast.error(`Security alert: Unauthorized access attempt from ${userEmail}`);
             }
         }
@@ -141,8 +143,13 @@ export default function AdminPage() {
     }, [isSignedIn]);
 
     // Security Redirect MUST happen after all hooks
-    if (isLoaded && isSignedIn && user?.primaryEmailAddress?.emailAddress !== adminEmail) {
-        return <Navigate to="/home" />;
+    if (isLoaded && isSignedIn) {
+        const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase() || '';
+        const adminEmails = (import.meta.env.VITE_ADMIN_EMAIL || '').split(',').map((e: string) => e.trim().toLowerCase());
+
+        if (!adminEmails.includes(userEmail)) {
+            return <Navigate to="/home" />;
+        }
     }
 
     if (!isLoaded) return <div className="min-h-screen flex items-center justify-center text-accent">Loading auth...</div>;

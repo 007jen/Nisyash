@@ -74,7 +74,9 @@ const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
             return res.status(401).json({ error: 'Invalid session' });
         }
         const userEmail = sessionClaims.email as string;
-        if (userEmail != process.env.ADMIN_EMAIL) {
+        const adminEmails = (process.env.ADMIN_EMAIL || '').split(',').map(e => e.trim().toLowerCase());
+
+        if (!adminEmails.includes(userEmail.toLowerCase())) {
             return res.status(403).json({ error: 'Forbidden' });
         }
         next();

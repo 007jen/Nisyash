@@ -39,8 +39,9 @@ export function Header() {
   const { quoteCount } = useQuote();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const { user } = useUser();
-  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-  const isAdmin = user?.primaryEmailAddress?.emailAddress === adminEmail;
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || '';
+  const adminEmails = adminEmail.split(',').map(e => e.trim().toLowerCase());
+  const isAdmin = !!user && adminEmails.includes(user.primaryEmailAddress?.emailAddress?.toLowerCase() || '');
 
   useEffect(() => {
     const handleScroll = () => {
