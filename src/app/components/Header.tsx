@@ -255,6 +255,25 @@ export function Header() {
             </SignedIn>
           </div>
 
+          {/* Mobile Actions (Visible on small screens) */}
+          <div className="flex lg:hidden items-center space-x-5 mr-1">
+            <Link to="/quote" className="text-accent hover:text-white transition-colors relative">
+              <ShoppingBag size={24} />
+              {quoteCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[10px] w-4.5 h-4.5 flex items-center justify-center rounded-full font-bold">
+                  {quoteCount}
+                </span>
+              )}
+            </Link>
+            <SignedIn>
+              <UserButton appearance={{
+                elements: {
+                  userButtonAvatarBox: "w-8 h-8"
+                }
+              }} />
+            </SignedIn>
+          </div>
+
           {/* Mobile Menu Button */}
           <button
             className="lg:hidden text-accent"
