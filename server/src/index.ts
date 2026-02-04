@@ -105,6 +105,7 @@ app.post('/api/leads', submissionLimiter, async (req, res) => {
         const sanitizedSubject = DOMPurify.sanitize(subject, { ALLOWED_TAGS: [] });
         const sanitizedMessage = DOMPurify.sanitize(message, { ALLOWED_TAGS: [] });
 
+        console.log(`[Lead] Creating lead for ${email}...`);
         const lead = await prisma.lead.create({
             data: {
                 firstName: sanitizedFirstName,
@@ -115,10 +116,13 @@ app.post('/api/leads', submissionLimiter, async (req, res) => {
                 message: sanitizedMessage,
             },
         });
+        console.log(`[Lead] Saved to DB (ID: ${lead.id}).`);
+
         const whatsappNumber = phone.replace(/[^\d]/g, '');
         const whatsappLink = `https://wa.me/91${whatsappNumber}`; // Assuming +91 for India as seen in contact info
 
-        await sendNotificationEmail(
+        // Send email in background (don't await)
+        sendNotificationEmail(
             `New Lead: ${sanitizedSubject}`,
             `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <h2 style="color: #d4af37;">New Lead Received</h2>
@@ -135,7 +139,7 @@ app.post('/api/leads', submissionLimiter, async (req, res) => {
                     <a href="mailto:${email}" style="background-color: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-left: 10px;">Reply via Email</a>
                 </div>
             </div>`
-        );
+        ).catch(err => console.error("[Lead] Email error:", err));
 
         res.status(201).json({ message: 'Lead submitted successfully', id: lead.id });
     } catch (error) {
@@ -168,6 +172,7 @@ app.post('/api/quotes', requireAuth, submissionLimiter, async (req, res) => {
             return res.status(400).json({ error: 'One or more products in your cart are invalid or no longer available.' });
         }
 
+        console.log(`[Quote] Creating quote for ${email}...`);
         const quoteRequest = await prisma.quoteRequest.create({
             data: {
                 fullName: sanitizedFullName,
@@ -190,6 +195,8 @@ app.post('/api/quotes', requireAuth, submissionLimiter, async (req, res) => {
                 items: true,
             },
         });
+        console.log(`[Quote] Saved to DB (ID: ${quoteRequest.id}).`);
+
         // ... inside app.post('/api/quotes') after quoteRequest is created
         // Generate item list for email
         const itemListHtml = quoteRequest.items.map((item: any) =>
@@ -199,7 +206,8 @@ app.post('/api/quotes', requireAuth, submissionLimiter, async (req, res) => {
         const whatsappNumber = phone.replace(/[^\d]/g, '');
         const whatsappLink = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(`Hi ${sanitizedFullName}, thank you for your quote request at Nishyash. Regarding your request for ${items.length} items...`)}`;
 
-        await sendNotificationEmail(
+        // Send email in background (don't await)
+        sendNotificationEmail(
             `New Quote Request from ${sanitizedFullName}`,
             `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <h2 style="color: #d4af37;">New Quote Request</h2>
@@ -217,7 +225,8 @@ app.post('/api/quotes', requireAuth, submissionLimiter, async (req, res) => {
                     <a href="mailto:${email}?subject=Quote Request Follow-up - Nishyash" style="background-color: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-left: 10px;">Reply via Email</a>
                 </div>
             </div>`
-        );
+        ).catch(err => console.error("[Quote] Email error:", err));
+
         res.status(201).json({ message: 'Quote request submitted successfully', id: quoteRequest.id });
     } catch (error) {
         console.error('Error submitting quote:', error);
