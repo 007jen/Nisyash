@@ -82,11 +82,13 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start space-x-2">
                 <Mail size={16} className="mt-1 flex-shrink-0" />
-                <span className="text-primary-foreground/80">info@nishyash.com</span>
+                <span className="text-primary-foreground/80">{import.meta.env.VITE_ADMIN_EMAIL || 'info@nishyash.com'}</span>
               </li>
               <li className="flex items-start space-x-2">
                 <Phone size={16} className="mt-1 flex-shrink-0" />
-                <span className="text-primary-foreground/80">+91 1234 567 890</span>
+                <span className="text-primary-foreground/80">
+                  {import.meta.env.VITE_WHATSAPP_NUMBER ? `+91 ${import.meta.env.VITE_WHATSAPP_NUMBER}` : '+91 1234 567 890'}
+                </span>
               </li>
               <li className="flex items-start space-x-2">
                 <MapPin size={16} className="mt-1 flex-shrink-0" />

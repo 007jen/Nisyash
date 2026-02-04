@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import { sendNotificationEmail } from './utils/mailer';
 import { rateLimit } from 'express-rate-limit';
 import DOMPurify from 'isomorphic-dompurify';
+import cloudinary, { storage as cloudinaryStorage } from './utils/cloudinary';
 
 
 const app = express();
@@ -28,8 +29,8 @@ const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY 
 
 // General limiter: Apply to all requests
 const generalLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 15 minutes
-    limit: 10, // Limit each IP to 100 requests per window
+    windowMs: 1 * 60 * 1000, // 1 minute
+    limit: 100, // Limit each IP to 100 requests per minute
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     message: { error: 'Too many requests, please try again later.' }
@@ -50,33 +51,10 @@ app.use(express.json({ limit: '50kb' }));
 app.use(express.urlencoded({ limit: '50kb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Configure Multer for image uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, '../uploads');
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-});
-
+// Configure Multer for Cloudinary
 const upload = multer({
-    storage,
+    storage: cloudinaryStorage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-    fileFilter: (req, file, cb) => {
-        const allowedTypes = /jpeg|jpg|png|webp/;
-        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = allowedTypes.test(file.mimetype);
-        if (extname && mimetype) {
-            return cb(null, true);
-        }
-        cb(new Error('Only images are allowed (jpeg, jpg, png, webp)'));
-    },
 });
 
 // Clerk Authentication Middleware
@@ -137,12 +115,26 @@ app.post('/api/leads', submissionLimiter, async (req, res) => {
                 message: sanitizedMessage,
             },
         });
+        const whatsappNumber = phone.replace(/[^\d]/g, '');
+        const whatsappLink = `https://wa.me/91${whatsappNumber}`; // Assuming +91 for India as seen in contact info
+
         await sendNotificationEmail(
             `New Lead: ${sanitizedSubject}`,
-            `<p><strong>Name:</strong> ${sanitizedFirstName} ${sanitizedLastName}</p>` +
-            `<p><strong>Email:</strong> ${email}</p>` +
-            `<p><strong>Phone:</strong> ${phone}</p>` +
-            `<p><strong>Message:</strong> ${sanitizedMessage}</p>`
+            `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #d4af37;">New Lead Received</h2>
+                <p><strong>Name:</strong> ${sanitizedFirstName} ${sanitizedLastName}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>Subject:</strong> ${sanitizedSubject}</p>
+                <p><strong>Message:</strong></p>
+                <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #d4af37;">
+                    ${sanitizedMessage}
+                </div>
+                <div style="margin-top: 20px;">
+                    <a href="${whatsappLink}" style="background-color: #25D366; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reply via WhatsApp</a>
+                    <a href="mailto:${email}" style="background-color: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-left: 10px;">Reply via Email</a>
+                </div>
+            </div>`
         );
 
         res.status(201).json({ message: 'Lead submitted successfully', id: lead.id });
@@ -199,13 +191,32 @@ app.post('/api/quotes', requireAuth, submissionLimiter, async (req, res) => {
             },
         });
         // ... inside app.post('/api/quotes') after quoteRequest is created
+        // Generate item list for email
+        const itemListHtml = quoteRequest.items.map((item: any) =>
+            `<li><strong>${item.productName}</strong> x ${item.quantity}</li>`
+        ).join('');
+
+        const whatsappNumber = phone.replace(/[^\d]/g, '');
+        const whatsappLink = `https://wa.me/91${whatsappNumber}?text=${encodeURIComponent(`Hi ${sanitizedFullName}, thank you for your quote request at Nishyash. Regarding your request for ${items.length} items...`)}`;
+
         await sendNotificationEmail(
             `New Quote Request from ${sanitizedFullName}`,
-            `<h3>Customer Details</h3>
-            <p><strong>Company:</strong> ${sanitizedCompanyName}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Items:</strong> ${items.length} products requested</p>
-            <p><strong>Notes:</strong> ${sanitizedNotes || 'N/A'}</p>`
+            `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #d4af37;">New Quote Request</h2>
+                <p><strong>Customer:</strong> ${sanitizedFullName}</p>
+                <p><strong>Company:</strong> ${sanitizedCompanyName}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                <h3 style="color: #d4af37;">Items Requested:</h3>
+                <ul>
+                    ${itemListHtml}
+                </ul>
+                <p><strong>Additional Notes:</strong> ${sanitizedNotes || 'None'}</p>
+                <div style="margin-top: 20px;">
+                    <a href="${whatsappLink}" style="background-color: #25D366; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Chat on WhatsApp</a>
+                    <a href="mailto:${email}?subject=Quote Request Follow-up - Nishyash" style="background-color: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-left: 10px;">Reply via Email</a>
+                </div>
+            </div>`
         );
         res.status(201).json({ message: 'Quote request submitted successfully', id: quoteRequest.id });
     } catch (error) {
@@ -232,8 +243,11 @@ app.get('/api/categories', async (req, res) => {
 app.post('/api/admin/categories', requireAuth, async (req, res) => {
     try {
         const { id, name, description, icon } = req.body;
+        if (!name) {
+            return res.status(400).json({ error: 'Category name is required' });
+        }
         // Use name to derive ID if ID not provided (slugify simple version)
-        const slug = id || name.toLowerCase().replaceAll(' ', '-').replace(/[^\w-]+/g, '');
+        const slug = id || name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
         const category = await prisma.category.create({
             data: {
                 id: slug,
@@ -243,8 +257,11 @@ app.post('/api/admin/categories', requireAuth, async (req, res) => {
             }
         });
         res.status(201).json(category);
-    } catch (error) {
+    } catch (error: any) {
         console.error('Create category error:', error);
+        if (error.code === 'P2002') {
+            return res.status(400).json({ error: 'A category with this name or ID already exists.' });
+        }
         res.status(500).json({ error: 'Failed to create category' });
     }
 });
@@ -292,7 +309,7 @@ app.get('/api/products', async (req, res) => {
 app.post('/api/admin/products', requireAuth, upload.single('image'), async (req, res) => {
     try {
         const { name, description, price, categoryId, inStock, defaultQuantity, tags } = req.body;
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        const imageUrl = req.file ? req.file.path : null;
 
         // Parse tags if it's a string (comma separated)
         let tagsArray: string[] = [];
@@ -333,7 +350,7 @@ app.patch('/api/admin/products/:id', requireAuth, upload.single('image'), async 
         if (categoryId) updateData.categoryId = categoryId;
         if (inStock !== undefined) updateData.inStock = inStock === 'true' || inStock === true;
         if (defaultQuantity) updateData.defaultQuantity = Number.parseInt(defaultQuantity);
-        if (req.file) updateData.image = `/uploads/${req.file.filename}`;
+        if (req.file) updateData.image = req.file.path;
 
         if (tags !== undefined) {
             if (typeof tags === 'string') {
@@ -392,9 +409,19 @@ app.delete('/api/admin/products/:id', requireAuth, async (req, res) => {
         const { id } = req.params;
         const product = await prisma.product.findUnique({ where: { id: id as string } });
         if (product?.image) {
-            const filePath = path.join(__dirname, '..', product.image);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+            if (product.image.includes('cloudinary.com')) {
+                // Extract public_id from Cloudinary URL
+                // Format: https://res.cloudinary.com/cloud_name/image/upload/v1234567/folder/public_id.jpg
+                const parts = product.image.split('/');
+                const filenameWithExtension = parts[parts.length - 1];
+                const publicId = `nishyash_products/${filenameWithExtension.split('.')[0]}`;
+                await cloudinary.uploader.destroy(publicId);
+            } else {
+                // Legacy local file deletion
+                const filePath = path.join(__dirname, '..', product.image);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
             }
         }
         await prisma.product.delete({ where: { id: id as string } });

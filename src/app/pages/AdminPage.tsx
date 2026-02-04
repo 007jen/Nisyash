@@ -633,7 +633,7 @@ export default function AdminPage() {
                                                             {selectedFile ? (
                                                                 <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="w-full h-full object-cover" />
                                                             ) : (
-                                                                <img src={`${apiBaseUrl}${editingProduct?.image}`} alt="Current" className="w-full h-full object-cover" />
+                                                                <img src={editingProduct?.image?.startsWith('/uploads') ? `${apiBaseUrl}${editingProduct?.image}` : editingProduct?.image || ''} alt="Current" className="w-full h-full object-cover" />
                                                             )}
                                                         </div>
                                                     )}
@@ -670,7 +670,7 @@ export default function AdminPage() {
                                         <div className="aspect-video relative bg-muted overflow-hidden">
                                             {product.image ? (
                                                 <img
-                                                    src={`${apiBaseUrl}${product.image}`}
+                                                    src={product.image.startsWith('/uploads') ? `${apiBaseUrl}${product.image}` : product.image}
                                                     alt={product.name}
                                                     className="w-full h-full object-cover"
                                                 />

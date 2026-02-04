@@ -42,9 +42,11 @@ export function ContactPage() {
   };
 
   const handleWhatsApp = () => {
-    const phoneNumber = '9892000592';
+    const rawNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '9082035278';
+    const phoneNumber = rawNumber.replace(/\D/g, '');
+    const formattedNumber = phoneNumber.startsWith('91') ? phoneNumber : `91${phoneNumber}`;
     const message = encodeURIComponent('Hi, I would like to get in touch with Nishyash Corporation.');
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    window.open(`https://wa.me/${formattedNumber}?text=${message}`, '_blank');
   };
 
 
@@ -81,8 +83,7 @@ export function ContactPage() {
                     </div>
                     <div>
                       <h3 className="mb-2">Email Us</h3>
-                      <p className="text-muted-foreground">soulfulcreations@nishyash.com</p>
-                      {/* <p className="text-muted-foreground">[EMAIL_ADDRESS]</p> */}
+                      <p className="text-muted-foreground">{import.meta.env.VITE_ADMIN_EMAIL || 'info@nishyash.com'}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -96,8 +97,9 @@ export function ContactPage() {
                     </div>
                     <div>
                       <h3 className="mb-2">Call Us</h3>
-                      <p className="text-muted-foreground">+91 98920 00592</p>
-                      {/* <p className="text-muted-foreground">+91 9876 543 210</p> */}
+                      <p className="text-muted-foreground">
+                        {import.meta.env.VITE_WHATSAPP_NUMBER ? `+91 ${import.meta.env.VITE_WHATSAPP_NUMBER}` : '+91 98920 00592'}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -200,8 +202,20 @@ export function ContactPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input id="phone" name="phone" type="number" placeholder="+91 1234567890" />
+                      <Label htmlFor="phone">Phone *</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="Ex: 9082035278"
+                        required
+                        maxLength={10}
+                        pattern="[0-9]{10}"
+                        onInput={(e) => {
+                          e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '');
+                        }}
+                      />
+                      <p className="text-[10px] text-muted-foreground">Please enter exactly 10 digits without spaces or country code.</p>
                     </div>
 
                     <div className="space-y-2">

@@ -86,7 +86,12 @@ export function QuotePage() {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    let sanitizedValue = value;
+    if (field === 'phone') {
+      // Strip non-digits and limit to 10
+      sanitizedValue = value.replace(/\D/g, '').slice(0, 10);
+    }
+    setFormData((prev) => ({ ...prev, [field]: sanitizedValue }));
   };
 
   if (submitted) {
@@ -306,11 +311,14 @@ function renderFormColumn(isLoaded: boolean, isSignedIn: boolean, user: any, for
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+91..."
+                placeholder="Ex: 9082035278"
                 required
+                maxLength={10}
+                pattern="[0-9]{10}"
                 value={formData.phone}
                 onChange={(e) => handleChange('phone', e.target.value)}
               />
+              <p className="text-[10px] text-muted-foreground">Please enter exactly 10 digits without spaces.</p>
             </div>
           </div>
 

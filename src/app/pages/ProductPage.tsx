@@ -99,11 +99,22 @@ export function ProductPage() {
   ];
 
   const handleWhatsApp = () => {
-    const phoneNumber = '911234567890';
+    const rawNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '';
+    // Strip any non-digit characters (like +, -, spaces)
+    const phoneNumber = rawNumber.replace(/\D/g, '');
+
+    // Ensure we have a valid number and it starts with 91 for India if not already present
+    const formattedNumber = phoneNumber.startsWith('91') ? phoneNumber : `91${phoneNumber}`;
+
     const message = encodeURIComponent(
       `Hi, I'm interested in ${product.name}. Can you provide more information?`
     );
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+
+    if (formattedNumber.length > 2) {
+      window.open(`https://wa.me/${formattedNumber}?text=${message}`, '_blank');
+    } else {
+      console.warn('WhatsApp number not configured correctly in .env');
+    }
   };
 
   return (
