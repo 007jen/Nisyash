@@ -16,6 +16,8 @@ model Lead {
     message   String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([createdAt])
 }
 
 model Category {
@@ -39,6 +41,8 @@ model Product {
     tags            String[]
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
+
+    @@index([createdAt])
 }
 
 model QuoteRequest {
@@ -51,6 +55,8 @@ model QuoteRequest {
     items           QuoteItem[]
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
+
+    @@index([createdAt])
 }
 
 model QuoteItem {
