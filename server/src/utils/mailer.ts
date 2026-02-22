@@ -18,9 +18,11 @@ export const sendNotificationEmail = async (subject: string, html: string) => {
     }
 
     try {
+        const adminEmails = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'jajoshi2005@gmail.com';
+
         const { data, error } = await resend.emails.send({
             from: 'Nisyash Corporation <onboarding@resend.dev>',
-            to: process.env.EMAIL_USER || 'jajoshi2005@gmail.com',
+            to: adminEmails.split(',').map(e => e.trim()),
             subject: subject,
             html: html,
         });
