@@ -87,7 +87,8 @@ export function Footer() {
               <li className="flex items-start space-x-2">
                 <Phone size={16} className="mt-1 flex-shrink-0" />
                 <span className="text-primary-foreground/80">
-                  {import.meta.env.VITE_WHATSAPP_NUMBER ? `+91 ${import.meta.env.VITE_WHATSAPP_NUMBER}` : '+91 1234 567 890'}
+                  +91 93263 47507<br />
+                  +91 836 916 2195
                 </span>
               </li>
               <li className="flex items-start space-x-2">

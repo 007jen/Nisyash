@@ -98,7 +98,8 @@ export function ContactPage() {
                     <div>
                       <h3 className="mb-2">Call Us</h3>
                       <p className="text-muted-foreground">
-                        {import.meta.env.VITE_WHATSAPP_NUMBER ? `+91 ${import.meta.env.VITE_WHATSAPP_NUMBER}` : '+91 90820 35278'}
+                        +91 93263 47507<br />
+                        +91 836 916 2195
                       </p>
                     </div>
                   </div>
