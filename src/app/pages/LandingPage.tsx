@@ -54,7 +54,7 @@ export function LandingPage() {
             <FallingGifts />
 
             {/* --- INTRODUCTION SECTION --- */}
-            <section className="relative pt-8 md:pt-12 pb-24 md:pb-32 bg-transparent text-center overflow-hidden">
+            <section className="relative pt-8 md:pt-12 pb-24 md:pb-32 bg-[#f2ebd9] text-center overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -87,7 +87,7 @@ export function LandingPage() {
                             className="flex items-center justify-center space-x-2 sm:space-x-4 mb-8"
                         >
                             <div className="h-[1px] w-8 sm:w-16 bg-primary/20" />
-                            <span className="text-primary tracking-[0.2em] sm:tracking-[0.4em] text-[10px] sm:text-sm font-medium uppercase">
+                            <span className="text-primary tracking-[0.2em] sm:tracking-[0.4em] text-xl sm:text-2lg font-medium uppercase">
                                 Soulful Creations & Bespoke Excellence
                             </span>
                             <div className="h-[1px] w-8 sm:w-16 bg-primary/20" />
