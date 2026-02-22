@@ -1,49 +1,87 @@
 import { motion } from "motion/react";
-import { ArrowRight, Star, Briefcase, Heart, Award, Shield, CheckCircle } from "lucide-react";
+import { ArrowRight, Star, Briefcase, Heart, Award, Shield, CheckCircle, Gift } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Footer } from "../components/Footer";
 import GoldenImage from "../../assets/goldenImage.jpg";
-import Gifting1 from "../../assets/GIftingImage1.jpg";
-import Gifting2 from "../../assets/GIftingImage2.jpg";
+
+import Ganesh from "../../assets/Ganesh.png";
+
+// Component for falling gifts effect
+const FallingGifts = () => {
+    const gifts = Array.from({ length: 25 });
+    const colors = ['#f94c4cff', '#3992ffff', '#67fc7eff', '#f6ff00ff', '#222222ff']; // Vibrant Red, Blue, Green, Yellow, Pink
+
+    return (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-20">
+            {gifts.map((_, i) => {
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                return (
+                    <motion.div
+                        key={`gift-${i}`}
+                        initial={{
+                            y: -100,
+                            x: `${Math.random() * 100}vw`,
+                            rotate: 0,
+                            opacity: 0
+                        }}
+                        animate={{
+                            y: '110vh',
+                            rotate: 360,
+                            opacity: [0, 0.7, 0.7, 0]
+                        }}
+                        transition={{
+                            duration: 12 + Math.random() * 15,
+                            repeat: Infinity,
+                            delay: Math.random() * 20,
+                            ease: "linear"
+                        }}
+                        className="absolute"
+                        style={{ color: randomColor }}
+                    >
+                        <Gift size={24 + Math.random() * 50} strokeWidth={1} />
+                    </motion.div>
+                );
+            })}
+        </div>
+    );
+};
 
 export function LandingPage() {
     return (
-        <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
+        <div className="min-h-screen bg-[#fff9f9] text-foreground selection:bg-accent selection:text-accent-foreground relative">
+            {/* Falling Gifts Layer */}
+            <FallingGifts />
+
             {/* --- INTRODUCTION SECTION --- */}
-            <section className="relative py-24 md:py-32 bg-background text-center overflow-hidden">
+            <section className="relative pt-8 md:pt-12 pb-24 md:pb-32 bg-transparent text-center overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1, ease: "easeOut" }}
+                        className="flex flex-col items-center"
                     >
-                        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-2 lg:gap-4 mb-4">
-                            <motion.img
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 1, delay: 0.2 }}
-                                src={Gifting1}
-                                alt="Decorative Gifting 1"
-                                className="hidden md:block w-40 lg:w-80 h-auto object-contain"
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            className="relative mb-4 group"
+                        >
+                            <div className="absolute inset-0 bg-accent/20 blur-2xl rounded-full scale-110 group-hover:bg-accent/30 transition-all duration-1000" />
+                            <img
+                                src={Ganesh}
+                                alt="Lord Ganesha"
+                                className="relative w-24 md:w-32 lg:w-40  drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]"
                             />
+                        </motion.div>
 
-                            <motion.h1
-                                className="text-6xl sm:text-8xl md:text-9xl font-script text-accent py-4 px-4"
-                            >
-                                Nishyash
-                            </motion.h1>
-
-                            <motion.img
-                                initial={{ opacity: 0, x: 20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 1, delay: 0.2 }}
-                                src={Gifting2}
-                                alt="Decorative Gifting 2"
-                                className="hidden md:block w-40 lg:w-80 h-auto object-contain"
-                            />
-                        </div>
+                        <motion.h1
+                            className="text-7xl sm:text-8xl md:text-9xl lg:text-[12rem] mb-4 font-script text-accent py-4"
+                        >
+                            Nishyash
+                        </motion.h1>
 
                         <motion.div
                             className="flex items-center justify-center space-x-2 sm:space-x-4 mb-8"
@@ -78,7 +116,7 @@ export function LandingPage() {
             </section>
 
             {/* --- ABOUT SECTION --- */}
-            <section className="py-32 relative overflow-hidden bg-muted">
+            <section className="py-32 relative overflow-hidden bg-[#fdf2f2]">
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="grid lg:grid-cols-2 gap-20 items-center">
                         <motion.div
@@ -124,7 +162,7 @@ export function LandingPage() {
             </section>
 
             {/* --- SERVICES SECTION --- */}
-            <section className="py-32 bg-background">
+            <section className="py-32 bg-transparent">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-20">
                         <motion.h2
@@ -144,7 +182,7 @@ export function LandingPage() {
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="group p-12 bg-card border border-border hover:border-accent/40 rounded-3xl transition-all duration-500 hover:shadow-xl"
+                            className="group p-12 bg-white/60 border border-border hover:border-accent/40 rounded-3xl transition-all duration-500 hover:shadow-xl backdrop-blur-sm"
                         >
                             <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-accent/20 transition-colors">
                                 <Briefcase className="text-accent" size={32} />
@@ -166,7 +204,7 @@ export function LandingPage() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.2 }}
-                            className="group p-12 bg-card border border-border hover:border-accent/40 rounded-3xl transition-all duration-500 hover:shadow-xl"
+                            className="group p-12 bg-white/60 border border-border hover:border-accent/40 rounded-3xl transition-all duration-500 hover:shadow-xl backdrop-blur-sm"
                         >
                             <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-accent/20 transition-colors">
                                 <Heart className="text-accent" size={32} />
@@ -186,7 +224,7 @@ export function LandingPage() {
             </section>
 
             {/* --- FEATURES GRID --- */}
-            <section className="py-32 bg-muted">
+            <section className="py-32 bg-[#fff2f2]">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
                         {[

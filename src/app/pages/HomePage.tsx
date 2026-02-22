@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { motion, AnimatePresence } from 'motion/react';
 import { testimonials } from '../data/products';
-import Banner from '../../assets/UpdatedBanner.png';
+import Banner from '../../assets/Dark.jpeg';
 import GoldenImage from '../../assets/goldenImage.jpg';
 
 interface Product {

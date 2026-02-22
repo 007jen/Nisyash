@@ -171,7 +171,7 @@ export function ProductPage() {
 
             {/* Quantity and CTA Buttons */}
             <div className="flex flex-col gap-6 mb-8">
-              <div className="flex items-center gap-4">
+              {/* <div className="flex items-center gap-4">
                 <span className="text-sm font-medium">Quantity:</span>
                 <div className="flex items-center border rounded-md">
                   <button
@@ -194,25 +194,25 @@ export function ProductPage() {
                     <Plus size={16} />
                   </button>
                 </div>
-              </div>
+              </div> */}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button
+                {/* <Button
                   size="lg"
                   className="bg-accent hover:bg-accent/90 text-accent-foreground w-full"
                   onClick={() => addToQuote(product, quantity)}
                 >
                   <ShoppingBag className="mr-2" size={20} />
                   Add to Quote
-                </Button>
+                </Button> */}
 
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full"
+                  className="w-2xl bg-green-500 text-white hover:bg-green-600"
                   onClick={handleWhatsApp}
                 >
-                  <MessageCircle className="mr-2" size={20} />
+                  <MessageCircle className="" size={20} />
                   WhatsApp
                 </Button>
               </div>
