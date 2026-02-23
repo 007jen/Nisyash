@@ -117,85 +117,90 @@ ${formData.requirements}
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
-                className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative"
+                className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-2xl relative overflow-hidden"
             >
-                <div className="bg-accent p-6 text-accent-foreground flex justify-between items-center sticky top-0 z-10 shadow-sm">
+                <div className="bg-accent p-4 sm:p-6 text-accent-foreground flex justify-between items-center sticky top-0 z-10 shadow-sm">
                     <div>
-                        <h2 className="text-2xl font-script italic">Begin Your Journey</h2>
-                        <p className="text-xs opacity-80 uppercase tracking-widest mt-1">Tell us your requirements</p>
+                        <h2 className="text-xl sm:text-2xl font-script italic">Begin Your Journey</h2>
+                        <p className="text-[10px] sm:text-xs opacity-80 uppercase tracking-widest mt-1">Tell us your requirements</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-black/10 rounded-full transition-colors">
-                        <CloseIcon size={24} />
+                        <CloseIcon size={20} className="sm:w-6 sm:h-6" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><User size={14} /> Name *</Label>
+                <form onSubmit={handleSubmit} className="p-4 sm:p-8 grid md:grid-cols-2 gap-4 sm:gap-6 max-h-[calc(100vh-120px)] overflow-y-auto">
+                    <div className="space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><User size={14} /> Name *</Label>
                         <Input
                             required
+                            className="h-9 sm:h-10 text-xs sm:text-sm"
                             placeholder="Full Name"
                             value={formData.name}
                             onChange={e => setFormData({ ...formData, name: e.target.value })}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Mail size={14} /> Email *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Mail size={14} /> Email *</Label>
                         <Input
                             required
                             type="email"
+                            className="h-9 sm:h-10 text-xs sm:text-sm"
                             placeholder="email@example.com"
                             value={formData.email}
                             onChange={e => setFormData({ ...formData, email: e.target.value })}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Phone size={14} /> Contact *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Phone size={14} /> Contact *</Label>
                         <Input
                             required
+                            className="h-9 sm:h-10 text-xs sm:text-sm"
                             placeholder="Phone Number"
                             value={formData.contact}
                             onChange={e => setFormData({ ...formData, contact: e.target.value })}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><MapPin size={14} /> State *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><MapPin size={14} /> State *</Label>
                         <Input
                             required
+                            className="h-9 sm:h-10 text-xs sm:text-sm"
                             placeholder="Your State"
                             value={formData.state}
                             onChange={e => setFormData({ ...formData, state: e.target.value })}
                         />
                     </div>
 
-                    <div className="md:col-span-2 space-y-2">
-                        <Label className="flex items-center gap-2"><ClipboardList size={14} /> Requirements *</Label>
+                    <div className="md:col-span-2 space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><ClipboardList size={14} /> Requirements *</Label>
                         <Textarea
                             required
                             placeholder="Describe what you are looking for..."
-                            className="min-h-[100px]"
+                            className="min-h-[80px] sm:min-h-[100px] text-xs sm:text-sm"
                             value={formData.requirements}
                             onChange={e => setFormData({ ...formData, requirements: e.target.value })}
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Clock size={14} /> Expected Delivery Time *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Clock size={14} /> Expected Delivery Time *</Label>
                         <Input
                             required
+                            className="h-9 sm:h-10 text-xs sm:text-sm"
                             placeholder="e.g. Next month, Urgently"
                             value={formData.deliveryTime}
                             onChange={e => setFormData({ ...formData, deliveryTime: e.target.value })}
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><ShoppingBag size={14} /> Purchase Option *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><ShoppingBag size={14} /> Purchase Option *</Label>
                         <div className="relative">
                             <select
                                 value={formData.purchaseOptions}
                                 onChange={e => setFormData({ ...formData, purchaseOptions: e.target.value })}
-                                className="w-full bg-background border border-input h-10 px-3 py-2 text-sm rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none cursor-pointer pr-10"
+                                className="w-full bg-background border border-input h-9 sm:h-10 px-3 py-2 text-xs sm:text-sm rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none cursor-pointer pr-10"
                             >
                                 <option value="10">10 Days</option>
                                 <option value="20">20 Days</option>
@@ -207,22 +212,23 @@ ${formData.requirements}
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Hash size={14} /> Estimated Quantity *</Label>
+                    <div className="space-y-1.5 sm:space-y-2">
+                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Hash size={14} /> Estimated Quantity *</Label>
                         <Input
                             required
                             type="number"
                             min="1"
+                            className="h-9 sm:h-10 text-xs sm:text-sm"
                             value={formData.quantity}
                             onChange={e => setFormData({ ...formData, quantity: e.target.value })}
                         />
                     </div>
 
-                    <div className="md:col-span-2 pt-4">
+                    <div className="md:col-span-2 pt-2 sm:pt-4">
                         <Button
                             disabled={loading || !isLoaded}
                             type="submit"
-                            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground h-12 text-lg rounded-xl transition-all"
+                            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground h-10 sm:h-12 text-base sm:text-lg rounded-xl transition-all"
                         >
                             {loading ? "Submitting..." : "Submit & Enter"}
                         </Button>

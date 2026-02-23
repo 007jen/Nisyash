@@ -302,34 +302,12 @@ export default function AdminPage() {
             <div className="max-w-7xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-4xl font-bold text-accent">Admin Dashboard</h1>
-                    <div className="flex gap-4">
-                        <button
-                            onClick={async () => {
-                                if (confirm("This will reset your onboarding status and redirect you to the landing page. Continue?")) {
-                                    localStorage.removeItem('nishyash_gateway_v2');
-                                    if (user) {
-                                        try {
-                                            await user.update({
-                                                unsafeMetadata: { ...user.unsafeMetadata, gateway_v2_completed: false }
-                                            });
-                                        } catch (e) {
-                                            console.error("Metadata reset failed:", e);
-                                        }
-                                    }
-                                    window.location.href = "/";
-                                }
-                            }}
-                            className="text-sm bg-red-500/10 text-red-500 px-4 py-2 rounded-md hover:bg-red-500/20 transition-colors"
-                        >
-                            Reset My Onboarding (Testing)
-                        </button>
-                        <button
-                            onClick={fetchData}
-                            className="text-sm bg-accent/10 text-accent px-4 py-2 rounded-md hover:bg-accent/20 transition-colors"
-                        >
-                            Refresh Data
-                        </button>
-                    </div>
+                    <button
+                        onClick={fetchData}
+                        className="text-sm bg-accent/10 text-accent px-4 py-2 rounded-md hover:bg-accent/20 transition-colors"
+                    >
+                        Refresh Data
+                    </button>
                 </div>
 
                 <Tabs defaultValue="leads" className="w-full">
