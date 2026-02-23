@@ -14,7 +14,6 @@ import { rateLimit } from 'express-rate-limit';
 import DOMPurify from 'isomorphic-dompurify';
 import cloudinary, { storage as cloudinaryStorage } from './utils/cloudinary';
 import helmet from 'helmet';
-import compression from 'compression';
 
 
 const app = express();
@@ -148,7 +147,7 @@ app.post('/api/leads', submissionLimiter, async (req, res) => {
                 <p><strong>Phone:</strong> ${phone}</p>
                 <p><strong>Subject:</strong> ${sanitizedSubject}</p>
                 <p><strong>Message:</strong></p>
-                <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #d4af37;">
+                <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #d4af37; white-space: pre-wrap;">
                     ${sanitizedMessage}
                 </div>
                 <div style="margin-top: 20px;">
@@ -236,7 +235,10 @@ app.post('/api/quotes', requireAuth, submissionLimiter, async (req, res) => {
                 <ul>
                     ${itemListHtml}
                 </ul>
-                <p><strong>Additional Notes:</strong> ${sanitizedNotes || 'None'}</p>
+                <p><strong>Additional Notes:</strong></p>
+                <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #d4af37; white-space: pre-wrap;">
+                    ${sanitizedNotes || 'None'}
+                </div>
                 <div style="margin-top: 20px;">
                     <a href="${whatsappLink}" style="background-color: #25D366; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Chat on WhatsApp</a>
                     <a href="mailto:${email}?subject=Quote Request Follow-up - Nishyash" style="background-color: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-left: 10px;">Reply via Email</a>
