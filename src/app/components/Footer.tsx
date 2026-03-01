@@ -94,7 +94,9 @@ export function Footer() {
               <li className="flex items-start space-x-2">
                 <MapPin size={16} className="mt-1 flex-shrink-0" />
                 <span className="text-primary-foreground/80">
-                  Mumbai, Maharashtra, India
+                  Business Center, Flat no. 28,<br />
+                  Humlog Society, Kandivali West,<br />
+                  Mumbai, Maharashtra 400067, India
                 </span>
               </li>
             </ul>
@@ -109,4 +111,3 @@ export function Footer() {
     </footer>
   );
 }
-console.log("wake up render");

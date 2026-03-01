@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, CheckCircle, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, CheckCircle, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -11,15 +11,19 @@ import { motion } from 'motion/react';
 export function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
 
+    if ((data.phone as string).length !== 10) {
+      alert('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const response = await fetch(`${apiBaseUrl}/api/leads`, {
         method: 'POST',
@@ -51,29 +55,29 @@ export function ContactPage() {
 
 
   return (
-    <div className="min-h-screen pt-32 pb-20">
+    <div className="min-h-screen pt-24 sm:pt-32 pb-12 sm:pb-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-10 md:mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl md:text-5xl mb-4">Get In Touch</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl mb-4 leading-tight">Get In Touch</h1>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Have questions about our products or services? We're here to help. Reach out to us through any of the channels below.
             </p>
           </motion.div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 mb-12">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 mb-12">
           {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h2 className="text-3xl mb-6">Contact Information</h2>
+            <h2 className="text-2xl sm:text-3xl mb-6">Contact Information</h2>
             <div className="space-y-6 mb-8">
               <Card>
                 <CardContent className="p-6">
@@ -177,8 +181,8 @@ export function ContactPage() {
               </Card>
             ) : (
               <Card>
-                <CardContent className="p-8">
-                  <h2 className="text-3xl mb-6">Send Us a Message</h2>
+                <CardContent className="p-6 sm:p-8">
+                  <h2 className="text-2xl sm:text-3xl mb-6">Send Us a Message</h2>
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">

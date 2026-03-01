@@ -74,7 +74,7 @@ export function CategoryPage() {
         description={`Explore our selection of ${category.name}. Premium corporate and personalised gifts.`}
       />
       {/* Category Hero */}
-      <section className="bg-gradient-to-br from-primary to-secondary text-primary-foreground pt-32 pb-12">
+      <section className="bg-gradient-to-br from-primary to-secondary text-primary-foreground pt-24 sm:pt-32 pb-8 sm:pb-12">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -82,13 +82,13 @@ export function CategoryPage() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl"
           >
-            <h1 className="text-5xl mb-4">{category.name}</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl mb-2 sm:mb-4">{category.name}</h1>
           </motion.div>
         </div>
       </section>
 
       {/* Products Grid */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
           {category.products && category.products.length > 0 ? (
             <>

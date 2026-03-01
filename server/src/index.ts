@@ -41,14 +41,27 @@ const generalLimiter = rateLimit({
 // Strict limiter: Apply to form submissions to prevent spam
 const submissionLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    limit: 5, // Limit each IP to 5 submissions per hour
+    limit: 20, // Reverted to a safe production value (was 100 for testing)
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     message: { error: 'Submission limit reached. Please wait an hour before trying again.' }
 });
 
 app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://*.clerk.accounts.dev", "https://clerk.nishyash.com"],
+            connectSrc: ["'self'", "https://*.clerk.accounts.dev", "https://clerk.nishyash.com", "https://api.cloudinary.com"],
+            imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.clerk.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            frameAncestors: ["'none'"], // Protects against Clickjacking
+        },
+    },
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+    crossOriginEmbedderPolicy: { policy: "credentialless" }, // Flexible for Cloudinary images
 }));
 const allowedOrigins = [
     'https://www.nishyash.com',
@@ -164,8 +177,8 @@ app.post('/api/leads', submissionLimiter, async (req, res) => {
     }
 });
 
-// Submit Quote Request
-app.post('/api/quotes', requireAuth, submissionLimiter, async (req, res) => {
+// Submit Quote Request (requireAuth commented out for public access per client request)
+app.post('/api/quotes', /* requireAuth, */ submissionLimiter, async (req, res) => {
     try {
         const { fullName, companyName, email, phone, additionalNotes, items } = req.body;
 

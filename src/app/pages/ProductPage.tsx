@@ -101,7 +101,7 @@ export function ProductPage() {
   const handleWhatsApp = () => {
     const rawNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '';
     // Strip any non-digit characters (like +, -, spaces)
-    const phoneNumber = rawNumber.replaceAll(/\D/g, '');
+    const phoneNumber = rawNumber.replace(/\D/g, '');
 
 
     // Ensure we have a valid number and it starts with 91 for India if not already present
@@ -146,23 +146,23 @@ export function ProductPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
             </div>
 
-            <h1 className="text-4xl mb-4">{product.name}</h1>
-            <p className="text-lg text-muted-foreground mb-4">{product.description}</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl mb-3 sm:mb-4">{product.name}</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">{product.description}</p>
 
 
 
             {/* Customization Options */}
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <h3 className="mb-4 text-xl">Customization Options</h3>
+            <Card className="mb-6 sm:mb-8">
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="mb-3 sm:mb-4 text-lg sm:text-xl font-semibold">Customization Options</h3>
                 <div className="space-y-2">
                   {customizationOptions.map((option) => (
                     <div key={option} className="flex items-center space-x-2">
-                      <CheckCircle className="text-accent" size={20} />
-                      <span className="text-sm">{option}</span>
+                      <CheckCircle className="text-accent" size={18} />
+                      <span className="text-xs sm:text-sm">{option}</span>
                     </div>
                   ))}
                 </div>
@@ -206,15 +206,17 @@ export function ProductPage() {
                   Add to Quote
                 </Button> */}
 
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-2xl bg-green-500 text-white hover:bg-green-600"
-                  onClick={handleWhatsApp}
-                >
-                  <MessageCircle className="" size={20} />
-                  WhatsApp
-                </Button>
+                <div className="flex justify-start">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto bg-green-500 text-white hover:bg-green-600 font-bold h-12 sm:h-14 px-6 sm:px-10 rounded-xl shadow-lg border-none transition-all active:scale-95"
+                    onClick={handleWhatsApp}
+                  >
+                    <MessageCircle className="mr-2" size={20} />
+                    WhatsApp Us
+                  </Button>
+                </div>
               </div>
             </div>
             <p className="text-xl font-bold text-accent mb-8">
@@ -287,7 +289,7 @@ export function ProductPage() {
             ))}
           </div>
         </motion.div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }

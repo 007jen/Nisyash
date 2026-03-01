@@ -8,7 +8,7 @@ export function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary to-secondary text-primary-foreground pt-32 pb-20">
+      <section className="bg-gradient-to-br from-primary to-secondary text-primary-foreground pt-24 sm:pt-32 pb-12 sm:pb-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -16,8 +16,8 @@ export function AboutPage() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl"
           >
-            <h1 className="text-3xl md:text-5xl mb-6">About Nishyash Corporation</h1>
-            <p className="text-xl text-primary-foreground/90">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl mb-4 sm:mb-6 leading-tight">About Nishyash Gift Studio</h1>
+            <p className="text-lg sm:text-xl text-primary-foreground/90">
               Your trusted partner in creating meaningful corporate and personalised gifting experiences that leave lasting impressions.
             </p>
           </motion.div>
@@ -25,23 +25,23 @@ export function AboutPage() {
       </section>
 
       {/* Our Story */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl mb-6">Our Story</h2>
-              <p className="text-lg text-muted-foreground mb-4">
+              <h2 className="text-3xl md:text-4xl mb-4 md:mb-6">Our Story</h2>
+              <p className="text-base md:text-lg text-muted-foreground mb-4">
                 Founded with a vision to revolutionize corporate gifting, Nishyash Corporation has grown into a trusted name in the industry. We understand that gifts are more than just products – they're expressions of appreciation, recognition, and connection.
               </p>
-              <p className="text-lg text-muted-foreground mb-4">
+              <p className="text-base md:text-lg text-muted-foreground mb-4">
                 Our journey began with a simple belief: every gift should tell a story and create a lasting impression. Today, we serve hundreds of businesses across industries, helping them strengthen relationships through thoughtfully curated gifts.
               </p>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-base md:text-lg text-muted-foreground">
                 With a commitment to quality, customization, and timely delivery, we've become the go-to partner for organizations seeking premium gifting solutions.
               </p>
             </motion.div>
@@ -197,20 +197,20 @@ export function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary to-secondary text-primary-foreground">
+      <section className="py-16 md:py-20 bg-gradient-to-br from-primary to-secondary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl mb-6">Ready to Partner With Us?</h2>
-          <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl mb-6">Ready to Partner With Us?</h2>
+          <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
             Let's create memorable gifting experiences together
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link to="/quote">
-              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to="/quote" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-6 h-auto text-lg">
                 Get a Quote
               </Button>
             </Link>
-            <Link to="/contact">
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+            <Link to="/contact" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 px-8 py-6 h-auto text-lg">
                 Contact Us
               </Button>
             </Link>

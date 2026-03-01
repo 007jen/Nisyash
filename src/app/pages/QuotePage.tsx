@@ -39,15 +39,11 @@ export function QuotePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSignedIn) {
-      alert('Please sign in to submit a quote request.');
-      return;
-    }
-
     setIsSubmitting(true);
-
     try {
-      const token = await getToken();
+      // Optional: Get token if signed in, but don't block
+      const token = isSignedIn ? await getToken() : null;
+
       const submissionData = {
         fullName: formData.name,
         companyName: formData.companyName,
@@ -61,12 +57,14 @@ export function QuotePage() {
         }))
       };
 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
       const response = await fetch(`${apiBaseUrl}/api/quotes`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: headers,
         body: JSON.stringify(submissionData),
       });
 
@@ -75,7 +73,11 @@ export function QuotePage() {
         clearQuote();
       } else {
         const err = await response.json();
-        alert(`Error: ${err.error || 'Failed to submit quote'}`);
+        if (response.status === 429) {
+          alert(err.error || "Submission limit reached. Please wait an hour before trying again.");
+        } else {
+          alert(`Error: ${err.error || 'Failed to submit quote'}`);
+        }
       }
     } catch (error) {
       console.error('Quote submission error:', error);

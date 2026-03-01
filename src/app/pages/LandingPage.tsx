@@ -1,318 +1,107 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useEffect, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
+import { motion } from "framer-motion";
 import {
-    ArrowRight, Star, Briefcase, Heart, Award, Shield, CheckCircle, Gift,
-    User, Mail, Phone, MapPin, ClipboardList, Clock, ShoppingBag, Hash,
-    X as CloseIcon
+    ArrowRight, Star, Briefcase, Heart, Award, Shield, CheckCircle, Gift
 } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Footer } from "../components/Footer";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
-import { toast } from "sonner";
-import { useUser } from "@clerk/clerk-react";
 import GoldenImage from "../../assets/goldenImage.jpg";
 import Ganesh from "../../assets/Ganesh.png";
 
-// Component for requirements form
-const RequirementsForm = ({ onClose }: { onClose: () => void }) => {
-    const navigate = useNavigate();
-    const { user, isLoaded, isSignedIn } = useUser();
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        name: user?.fullName || "",
-        email: user?.primaryEmailAddress?.emailAddress || "",
-        contact: "",
-        state: "",
-        deliveryTime: "",
-        purchaseOptions: "10",
-        quantity: "1",
-        requirements: ""
-    });
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-
-        try {
-            // Split name into first and last name for backend requirements
-            const nameParts = formData.name.trim().split(/\s+/);
-            const fName = nameParts[0] || "";
-            const lName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "Lead";
-
-            const payload = {
-                firstName: fName,
-                lastName: lName,
-                email: formData.email,
-                phone: formData.contact,
-                subject: "Gateway Requirement Form",
-                message: `
---- NEW GATEWAY LEAD ---
-👤 Name: ${formData.name}
-📧 Email: ${formData.email}
-📞 Contact: ${formData.contact}
-📍 State: ${formData.state}
-
---- REQUIREMENTS ---
-⏱️ Delivery: ${formData.deliveryTime}
-📅 Purchase: ${formData.purchaseOptions} Days
-🔢 Quantity: ${formData.quantity}
-
-📋 Message:
-${formData.requirements}
-`.trim()
-            };
-
-            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-            const res = await fetch(`${apiBaseUrl}/api/leads`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-                toast.success("Thank you! Welcome to Nishyash.");
-
-                // Allow immediate local access
-                localStorage.setItem('nishyash_gateway_v2', 'true');
-
-                // If signed in, also update Clerk metadata for cross-device persistence
-                if (isSignedIn && user) {
-                    try {
-                        await user.update({
-                            unsafeMetadata: {
-                                ...user.unsafeMetadata,
-                                gateway_v2_completed: true
-                            }
-                        });
-                    } catch (err) {
-                        console.error("Failed to sync gateway status to metadata:", err);
-                    }
-                }
-
-                onClose();
-                navigate('/home');
-            } else {
-                const errorData = await res.json();
-                toast.error(errorData.error || "Failed to submit. Please try again.");
-            }
-        } catch (error) {
-            console.error("Submission error:", error);
-            toast.error("Could not connect to the server.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
-        >
-            <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-2xl relative overflow-hidden"
-            >
-                <div className="bg-accent p-4 sm:p-6 text-accent-foreground flex justify-between items-center sticky top-0 z-10 shadow-sm">
-                    <div>
-                        <h2 className="text-xl sm:text-2xl font-script italic">Begin Your Journey</h2>
-                        <p className="text-[10px] sm:text-xs opacity-80 uppercase tracking-widest mt-1">Tell us your requirements</p>
-                    </div>
-                    <button onClick={onClose} className="p-2 hover:bg-black/10 rounded-full transition-colors">
-                        <CloseIcon size={20} className="sm:w-6 sm:h-6" />
-                    </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="p-4 sm:p-8 grid md:grid-cols-2 gap-4 sm:gap-6 max-h-[calc(100vh-120px)] overflow-y-auto">
-                    <div className="space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><User size={14} /> Name *</Label>
-                        <Input
-                            required
-                            className="h-9 sm:h-10 text-xs sm:text-sm"
-                            placeholder="Full Name"
-                            value={formData.name}
-                            onChange={e => setFormData({ ...formData, name: e.target.value })}
-                        />
-                    </div>
-                    <div className="space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Mail size={14} /> Email *</Label>
-                        <Input
-                            required
-                            type="email"
-                            className="h-9 sm:h-10 text-xs sm:text-sm"
-                            placeholder="email@example.com"
-                            value={formData.email}
-                            onChange={e => setFormData({ ...formData, email: e.target.value })}
-                        />
-                    </div>
-                    <div className="space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Phone size={14} /> Contact *</Label>
-                        <Input
-                            required
-                            className="h-9 sm:h-10 text-xs sm:text-sm"
-                            placeholder="Phone Number"
-                            value={formData.contact}
-                            onChange={e => setFormData({ ...formData, contact: e.target.value })}
-                        />
-                    </div>
-                    <div className="space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><MapPin size={14} /> State *</Label>
-                        <Input
-                            required
-                            className="h-9 sm:h-10 text-xs sm:text-sm"
-                            placeholder="Your State"
-                            value={formData.state}
-                            onChange={e => setFormData({ ...formData, state: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="md:col-span-2 space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><ClipboardList size={14} /> Requirements *</Label>
-                        <Textarea
-                            required
-                            placeholder="Describe what you are looking for..."
-                            className="min-h-[80px] sm:min-h-[100px] text-xs sm:text-sm"
-                            value={formData.requirements}
-                            onChange={e => setFormData({ ...formData, requirements: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Clock size={14} /> Expected Delivery Time *</Label>
-                        <Input
-                            required
-                            className="h-9 sm:h-10 text-xs sm:text-sm"
-                            placeholder="e.g. Next month, Urgently"
-                            value={formData.deliveryTime}
-                            onChange={e => setFormData({ ...formData, deliveryTime: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><ShoppingBag size={14} /> Purchase Option *</Label>
-                        <div className="relative">
-                            <select
-                                value={formData.purchaseOptions}
-                                onChange={e => setFormData({ ...formData, purchaseOptions: e.target.value })}
-                                className="w-full bg-background border border-input h-9 sm:h-10 px-3 py-2 text-xs sm:text-sm rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none cursor-pointer pr-10"
-                            >
-                                <option value="10">10 Days</option>
-                                <option value="20">20 Days</option>
-                                <option value="30">30 Days</option>
-                            </select>
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-muted-foreground">
-                                <ArrowRight size={14} className="rotate-90" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-1.5 sm:space-y-2">
-                        <Label className="flex items-center gap-2 text-xs sm:text-sm"><Hash size={14} /> Estimated Quantity *</Label>
-                        <Input
-                            required
-                            type="number"
-                            min="1"
-                            className="h-9 sm:h-10 text-xs sm:text-sm"
-                            value={formData.quantity}
-                            onChange={e => setFormData({ ...formData, quantity: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="md:col-span-2 pt-2 sm:pt-4">
-                        <Button
-                            disabled={loading || !isLoaded}
-                            type="submit"
-                            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground h-10 sm:h-12 text-base sm:text-lg rounded-xl transition-all"
-                        >
-                            {loading ? "Submitting..." : "Submit & Enter"}
-                        </Button>
-                    </div>
-                </form>
-            </motion.div>
-        </motion.div>
-    );
-};
 
 // Component for falling gifts effect
 const FallingGifts = () => {
-    const gifts = Array.from({ length: 25 });
     const colors = ['#f94c4cff', '#3992ffff', '#67fc7eff', '#f6ff00ff', '#222222ff'];
+
+    const giftData = useMemo(() => {
+        return Array.from({ length: 25 }).map((_, i) => ({
+            id: i,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            x: Math.random() * 100,
+            size: 24 + Math.random() * 50,
+            duration: 12 + Math.random() * 15,
+            delay: Math.random() * 20
+        }));
+    }, []);
 
     return (
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-20">
-            {gifts.map((_, i) => {
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                return (
-                    <motion.div
-                        key={`gift-${i}`}
-                        initial={{
-                            y: -100,
-                            x: `${Math.random() * 100}vw`,
-                            rotate: 0,
-                            opacity: 0
-                        }}
-                        animate={{
-                            y: '110vh',
-                            rotate: 360,
-                            opacity: [0, 0.7, 0.7, 0]
-                        }}
-                        transition={{
-                            duration: 12 + Math.random() * 15,
-                            repeat: Infinity,
-                            delay: Math.random() * 20,
-                            ease: "linear"
-                        }}
-                        className="absolute"
-                        style={{ color: randomColor }}
-                    >
-                        <Gift size={24 + Math.random() * 50} strokeWidth={1} />
-                    </motion.div>
-                );
-            })}
+            {giftData.map((gift) => (
+                <motion.div
+                    key={`gift-${gift.id}`}
+                    initial={{
+                        y: -100,
+                        x: `${gift.x}vw`,
+                        rotate: 0,
+                        opacity: 0
+                    }}
+                    animate={{
+                        y: '110vh',
+                        rotate: 360,
+                        opacity: [0, 0.7, 0.7, 0]
+                    }}
+                    transition={{
+                        duration: gift.duration,
+                        repeat: Infinity,
+                        delay: gift.delay,
+                        ease: "linear"
+                    }}
+                    className="absolute"
+                    style={{ color: gift.color }}
+                >
+                    <Gift size={gift.size} strokeWidth={1} />
+                </motion.div>
+            ))}
         </div>
     );
 };
 
 export function LandingPage() {
-    const [showForm, setShowForm] = useState(false);
+    const { user } = useUser();
     const navigate = useNavigate();
-    const { user, isLoaded } = useUser();
 
-    // Auto-navigate if already completed
+    // Admin detection logic matching App.tsx
+    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || '';
+    const adminEmails = adminEmail.split(',').map(e => e.trim().toLowerCase());
+    const isAdmin = !!user && adminEmails.includes(user.primaryEmailAddress?.emailAddress?.toLowerCase() || '');
+
     useEffect(() => {
-        if (isLoaded && user) {
-            if (user.unsafeMetadata?.gateway_v2_completed === true) {
-                localStorage.setItem('nishyash_gateway_v2', 'true');
+        const unlockTime = localStorage.getItem('nishyash_gateway_unlock');
+        if (unlockTime) {
+            const now = Date.now();
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+            if (now - Number.parseInt(unlockTime) <= twentyFourHours) {
                 navigate('/home');
+            } else {
+                localStorage.removeItem('nishyash_gateway_unlock');
             }
         }
-    }, [isLoaded, user, navigate]);
+    }, []);
 
     const handleBeginJourney = () => {
-        const isCompletedLocal = localStorage.getItem('nishyash_gateway_v2') === 'true';
-        const isCompletedMetadata = user?.unsafeMetadata?.gateway_v2_completed === true;
-
-        if (isCompletedLocal || isCompletedMetadata) {
-            navigate('/home');
-        } else {
-            setShowForm(true);
-        }
+        // Always trigger the chatbot
+        globalThis.dispatchEvent(new CustomEvent('open-nishyash-chat'));
     };
 
     return (
         <div className="min-h-screen bg-[#fff9f9] text-foreground selection:bg-accent selection:text-accent-foreground relative">
-            <AnimatePresence>
-                {showForm && <RequirementsForm onClose={() => setShowForm(false)} />}
-            </AnimatePresence>
 
             {/* Falling Gifts Layer */}
             <FallingGifts />
+
+            {/* Admin Access (Subtle) - Only visible to admins */}
+            {isAdmin && (
+                <div className="absolute top-4 right-4 z-50">
+                    <Link to="/admin">
+                        <Button variant="outline" size="sm" className="bg-white/5 backdrop-blur-md hover:bg-white/10 text-accent/60 hover:text-accent gap-2 border border-accent/10 transition-all rounded-full px-4 text-xs">
+                            <Shield size={12} />
+                            Admin Access
+                        </Button>
+                    </Link>
+                </div>
+            )}
 
             {/* --- INTRODUCTION SECTION --- */}
             <section className="relative pt-8 md:pt-12 pb-24 md:pb-32 bg-[#f2ebd9] text-center overflow-hidden">

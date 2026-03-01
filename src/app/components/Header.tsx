@@ -113,30 +113,29 @@ export function Header() {
         }`}
     >
       <div className="w-full px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 sm:h-20 lg:h-24">
+        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/home" className="flex items-center space-x-2 flex-shrink min-w-0">
-            <img src={Logo} alt="Nishyash Corporation" className="h-10 sm:h-16 lg:h-25 w-auto object-contain flex-shrink-0" />
+          <Link to="/home" className="flex items-center space-x-1 sm:space-x-1 flex-shrink min-w-0">
+            <img src={Logo} alt="Nishyash Corporation" className="h-10 sm:h-16 lg:h-20 w-auto object-contain flex-shrink-0" />
             <div className="flex flex-col min-w-0 overflow-visible">
-              <span className="text-base sm:text-2xl lg:text-5xl font-bold text-accent font-script whitespace-nowrap leading-relaxed">Nishyash Gift Studio</span>
-              {/* <span className="text-2xl text-accent font-script"></span> */}
+              <span className="text-xs sm:text-2xl lg:text-5xl font-bold text-accent font-script whitespace-nowrap leading-tight">Nishyash Gift Studio</span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-2">
-            <Link to="/home" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-lg`}>
+          <div className="hidden lg:flex items-center space-x-1">
+            <Link to="/home" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-base`}>
               Home
             </Link>
 
-            <Link to="/about" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-lg`}>
+            <Link to="/about" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-base`}>
               About
             </Link>
 
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="!bg-transparent !text-accent hover:!text-white focus:!text-white data-[active]:!text-white data-[state=open]:!text-white !text-lg">Products</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="!bg-transparent !text-accent hover:!text-white focus:!text-white data-[active]:!text-white data-[state=open]:!text-white !text-base">Products</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                       {categories.map((category) => (
@@ -165,12 +164,12 @@ export function Header() {
               </NavigationMenuList>
             </NavigationMenu>
 
-            <Link to="/contact" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-primary !text-lg`}>
+            <Link to="/contact" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-base`}>
               Contact
             </Link>
 
             {isAdmin && (
-              <Link to="/admin" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-primary !text-lg`}>
+              <Link to="/admin" className={`${navigationMenuTriggerStyle()} !bg-transparent !text-accent hover:!text-white !text-base`}>
                 Admin
               </Link>
             )}
@@ -190,37 +189,41 @@ export function Header() {
               </div>
 
               {/* Search Results Dropdown */}
-              {(searchQuery.length > 1) && (
+              {searchQuery.length > 1 && (
                 <div className="absolute top-full right-0 mt-2 w-80 bg-black border border-accent/20 rounded-lg shadow-2xl overflow-hidden z-[60]">
-                  {isSearching ? (
-                    <div className="p-4 text-center text-sm text-accent">Searching...</div>
-                  ) : searchResults.length > 0 ? (
-                    <div className="max-h-96 overflow-y-auto">
-                      {searchResults.map((item) => (
-                        <Link
-                          key={item.id}
-                          to={`/products/${item.id}`}
-                          className="flex items-center gap-3 p-3 hover:bg-accent/10 transition-colors border-b border-accent/5"
-                          onClick={() => setSearchQuery('')}
-                        >
-                          <div className="w-10 h-10 bg-muted rounded overflow-hidden flex-shrink-0">
-                            <img
-                              src={item.image?.startsWith('/uploads') ? `${apiBaseUrl}${item.image}` : item.image || 'https://placehold.co/100x100?text=No+Image'}
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">{item.name}</p>
-                            <p className="text-xs text-accent/70 truncate">{item.category?.name}</p>
-                          </div>
-                          <p className="text-xs font-bold text-accent">₹{item.price}</p>
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-4 text-center text-sm text-accent/50">No products found</div>
-                  )}
+                  {(() => {
+                    if (isSearching) {
+                      return <div className="p-4 text-center text-sm text-accent">Searching...</div>;
+                    }
+                    if (searchResults.length > 0) {
+                      return (
+                        <div className="max-h-96 overflow-y-auto">
+                          {searchResults.map((item) => (
+                            <Link
+                              key={item.id}
+                              to={`/products/${item.id}`}
+                              className="flex items-center gap-3 p-3 hover:bg-accent/10 transition-colors border-b border-accent/5"
+                              onClick={() => setSearchQuery('')}
+                            >
+                              <div className="w-10 h-10 bg-muted rounded overflow-hidden flex-shrink-0">
+                                <img
+                                  src={item.image?.startsWith('/uploads') ? `${apiBaseUrl}${item.image}` : item.image || 'https://placehold.co/100x100?text=No+Image'}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-white truncate">{item.name}</p>
+                                <p className="text-xs text-accent/70 truncate">{item.category?.name}</p>
+                              </div>
+                              <p className="text-xs font-bold text-accent">₹{item.price}</p>
+                            </Link>
+                          ))}
+                        </div>
+                      );
+                    }
+                    return <div className="p-4 text-center text-sm text-accent/50">No products found</div>;
+                  })()}
                 </div>
               )}
             </div>
@@ -287,7 +290,7 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border h-[calc(100vh-80px)] overflow-y-auto">
+          <div className="lg:hidden py-4 border-t border-border h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)] overflow-y-auto">
             <nav className="flex flex-col space-y-4 pb-20 px-4">
               {/* Mobile Search Bar */}
               <div className="relative mt-2 mb-4">

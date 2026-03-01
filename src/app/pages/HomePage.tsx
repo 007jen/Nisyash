@@ -150,7 +150,7 @@ export function HomePage() {
                 <img
                   src={slides[currentSlide].image}
                   alt={slides[currentSlide].title}
-                  className="w-full h-auto md:h-full md:object-cover"
+                  className="w-full h-56 sm:h-72 md:h-full object-cover"
                 />
 
                 {/* Subtle gradient overlay at the bottom for better edge definition if needed */}
@@ -158,7 +158,7 @@ export function HomePage() {
               </motion.div>
             </AnimatePresence>
             {/* Height placeholder for MD+ screens where content is absolute */}
-            <div className="hidden md:block h-[60vh]" />
+            <div className="hidden md:block h-[50vh] lg:h-[60vh]" />
           </div>
         </div>
       </section>
@@ -209,15 +209,15 @@ export function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20 bg-muted">
+      <section className="py-12 md:py-20 bg-muted">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl mb-4">Why Choose Nishyash</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-10 md:mb-12">
+            <h2 className="text-3xl md:text-4xl mb-3 md:mb-4">Why Choose Nishyash</h2>
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
               Your trusted partner for professional gifting solutions
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {[
               {
                 icon: <Users className="text-accent" size={32} />,
@@ -271,15 +271,15 @@ export function HomePage() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl mb-4">Featured Products</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-10 md:mb-12">
+            <h2 className="text-3xl md:text-4xl mb-3 md:mb-4">Featured Products</h2>
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
               Discover our handpicked selection of premium gifts
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
             {featuredProducts.map((product, index) => (
 
               <motion.div
@@ -377,20 +377,20 @@ export function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary to-secondary text-primary-foreground">
+      <section className="py-10 md:py-12 bg-gradient-to-br from-primary to-secondary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl mb-6">Looking for a Reliable Corporate Gifting Partner?</h2>
-          <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-xl sm:text-2xl md:text-3xl mb-4">Looking for a Reliable Corporate Gifting Partner?</h2>
+          <p className="text-base md:text-lg text-primary-foreground/90 mb-6 max-w-2xl mx-auto">
             Let us help you create lasting impressions with our premium gifting solutions
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link to="/quote">
-              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <Link to="/quote" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-4 h-auto text-base">
                 Get a Quote
               </Button>
             </Link>
-            <Link to="/contact">
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+            <Link to="/contact" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 px-6 py-4 h-auto text-base !bg-transparent">
                 Contact Us
               </Button>
             </Link>

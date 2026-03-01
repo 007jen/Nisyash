@@ -1,7 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { WhatsAppWidget } from './components/WhatsAppWidget';
+import { ChatBot } from './components/ChatBot';
 import ScrollToTop from './components/ScrollToTop';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
@@ -16,12 +16,30 @@ import { Toaster } from './components/ui/sonner';
 import { ProductsPage } from './pages/ProductsPage';
 import { LandingPage } from './pages/LandingPage';
 import AdminPage from './pages/AdminPage';
-
 import { useUser, useAuth } from '@clerk/clerk-react';
+
 
 const GatewayGuard = () => {
   const { user, isLoaded: isUserLoaded } = useUser();
   const { isLoaded: isAuthLoaded } = useAuth();
+
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || '';
+  const adminEmails = adminEmail.split(',').map(e => e.trim().toLowerCase());
+  const isAdmin = !!user && adminEmails.includes(user.primaryEmailAddress?.emailAddress?.toLowerCase() || '');
+
+  const isUnlocked = (() => {
+    const unlockTime = localStorage.getItem('nishyash_gateway_unlock');
+    if (!unlockTime) return false;
+
+    const now = Date.now();
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+
+    if (now - Number.parseInt(unlockTime) > twentyFourHours) {
+      localStorage.removeItem('nishyash_gateway_unlock');
+      return false;
+    }
+    return true;
+  })();
 
   if (!isUserLoaded || !isAuthLoaded) {
     return (
@@ -31,14 +49,12 @@ const GatewayGuard = () => {
     );
   }
 
-  const isCompletedLocal = localStorage.getItem('nishyash_gateway_v2') === 'true';
-  const isCompletedMetadata = user?.unsafeMetadata?.gateway_v2_completed === true;
-
-  if (!isCompletedLocal && !isCompletedMetadata) {
-    return <Navigate to="/" replace />;
+  // Allow admin bypass or session-unlocked users, otherwise redirect to landing page
+  if (isAdmin || isUnlocked) {
+    return <Outlet />;
   }
 
-  return <Outlet />;
+  return <Navigate to="/" replace />;
 };
 
 export default function App() {
@@ -69,11 +85,11 @@ export default function App() {
                   </Routes>
                 </main>
                 <Footer />
-                <WhatsAppWidget />
               </div>
             } />
           </Route>
         </Routes>
+        <ChatBot />
         <Toaster position="top-center" />
       </Router>
     </QuoteProvider>
