@@ -171,8 +171,7 @@ export function ChatBot() {
                             { label: 'Eco-friendly products', value: 'eco' },
                             { label: 'Premium packaging', value: 'premium' },
                             { label: 'Personalized message cards', value: 'cards' },
-                            { label: 'Pan-India delivery', value: 'pan-india' },
-                            { label: 'Done selection 👉', value: 'done' }
+                            { label: 'Pan-India delivery', value: 'pan-india' }
                         ]
                     });
                     break;
@@ -232,16 +231,11 @@ export function ChatBot() {
                 nextStep('preferences');
                 break;
             case 'preferences':
-                if (option.value === 'done') {
-                    nextStep('lead-capture');
-                } else {
-                    setFormData(prev => ({
-                        ...prev,
-                        preferences: prev.preferences.includes(option.value)
-                            ? prev.preferences.filter(p => p !== option.value)
-                            : [...prev.preferences, option.value]
-                    }));
-                }
+                setFormData(prev => ({
+                    ...prev,
+                    preferences: [option.value]
+                }));
+                nextStep('lead-capture');
                 break;
         }
     };
