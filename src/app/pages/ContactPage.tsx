@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { motion } from 'motion/react';
+import { ChatBot } from '../components/ChatBot';
 
 export function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -56,6 +57,7 @@ export function ContactPage() {
 
   return (
     <div className="min-h-screen pt-24 sm:pt-32 pb-12 sm:pb-20">
+      <ChatBot />
       <div className="container mx-auto px-4">
         <div className="text-center mb-10 md:mb-12">
           <motion.div
