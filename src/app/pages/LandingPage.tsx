@@ -9,6 +9,7 @@ import { Button } from "../components/ui/button";
 import { Footer } from "../components/Footer";
 import GoldenImage from "../../assets/goldenImage.jpg";
 import Ganesh from "../../assets/Ganesh.png";
+import { Seo } from "../components/SEO";
 
 
 // Component for falling gifts effect
@@ -73,6 +74,12 @@ export function LandingPage() {
 
     return (
         <div className="min-h-screen bg-[#fff9f9] text-foreground selection:bg-accent selection:text-accent-foreground relative">
+            <Seo
+                title="Corporate & Personalised Gifting"
+                description="Explore premium corporate gifts, personalised hampers, employee kits, and bespoke gifting solutions for businesses across India."
+                keywords={["corporate gifting", "personalised gifts", "corporate hampers", "employee gifting"]}
+                canonicalPath="/"
+            />
 
             {/* Falling Gifts Layer */}
             <FallingGifts />

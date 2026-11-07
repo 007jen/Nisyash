@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { testimonials } from '../data/products';
 import Banner from '../../assets/Dark.jpeg';
 import GoldenImage from '../../assets/goldenImage.jpg';
+import { Seo } from '../components/SEO';
 
 interface Product {
   id: string;
@@ -86,6 +87,12 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title="Corporate Gift Solutions"
+        description="Discover corporate gifting, employee appreciation kits, branded merchandise, luxury hampers, and personalised gifts for every occasion."
+        keywords={['corporate gift solutions', 'employee gifts', 'branded merchandise', 'luxury hampers']}
+        canonicalPath="/home"
+      />
       {/* Hero Section */}
       <section className="relative w-full bg-background pt-14 sm:pt-16 lg:pt-20">
         <div className="flex flex-col">

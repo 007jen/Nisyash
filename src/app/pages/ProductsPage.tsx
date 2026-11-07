@@ -4,6 +4,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { ArrowRight } from 'lucide-react';
+import { Seo } from '../components/SEO';
 
 interface Product {
     id: string;
@@ -55,6 +56,12 @@ export function ProductsPage() {
 
     return (
         <div className="pt-28 pb-20 min-h-screen bg-background">
+          <Seo
+            title="Corporate and Personalised Gifts"
+            description="Browse corporate gifts, drinkware, apparel, office gifts, eco-friendly products, premium hampers, and personalised gifting options."
+            keywords={['corporate gifts', 'personalised gifts', 'gifting products', 'premium hampers', 'branded merchandise']}
+            canonicalPath="/products"
+          />
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">Our Complete Collection</h1>

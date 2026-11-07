@@ -9,6 +9,7 @@ import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
 import { Textarea } from '../components/ui/textarea';
 import { toast } from 'sonner';
+import { Seo } from '../components/SEO';
 const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -299,6 +300,12 @@ export default function AdminPage() {
 
     return (
         <div className="min-h-screen pt-32 pb-20 px-6 bg-background">
+            <Seo
+                title="Admin Dashboard"
+                description="Nishyash administration dashboard."
+                noIndex={true}
+                canonicalPath="/admin"
+            />
             <div className="max-w-7xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-4xl font-bold text-accent">Admin Dashboard</h1>

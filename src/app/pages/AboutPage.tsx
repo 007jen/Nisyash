@@ -3,10 +3,17 @@ import { CheckCircle, Award, Users, TrendingUp, Heart } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { motion } from 'motion/react';
+import { Seo } from '../components/SEO';
 
 export function AboutPage() {
   return (
     <div className="min-h-screen">
+      <Seo
+        title="About Nishyash Gift Studio"
+        description="Meet Nishyash, a corporate and personalised gifting studio creating meaningful branded gifts for businesses and special occasions."
+        keywords={['about Nishyash', 'corporate gifting company', 'personalised gifting studio']}
+        canonicalPath="/about"
+      />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary to-secondary text-primary-foreground pt-24 sm:pt-32 pb-12 sm:pb-20">
         <div className="container mx-auto px-4">

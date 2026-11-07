@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /quote
+
+Sitemap: https://www.nishyash.com/sitemap.xml

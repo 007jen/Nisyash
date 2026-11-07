@@ -9,6 +9,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { motion } from 'motion/react';
 import { useQuote } from '../context/QuoteContext';
+import { Seo } from '../components/SEO';
 
 export function QuotePage() {
   const { isSignedIn, user, isLoaded } = useUser();
@@ -99,6 +100,12 @@ export function QuotePage() {
   if (submitted) {
     return (
       <div className="min-h-screen pt-32 pb-20">
+        <Seo
+          title="Request a Corporate Gift Quote"
+          description="Build a quote for corporate gifts, personalised hampers, and bulk gifting requirements."
+          noIndex={true}
+          canonicalPath="/quote"
+        />
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
