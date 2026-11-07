@@ -1,7 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { ChatBot } from './components/ChatBot';
 import ScrollToTop from './components/ScrollToTop';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
@@ -16,46 +15,6 @@ import { Toaster } from './components/ui/sonner';
 import { ProductsPage } from './pages/ProductsPage';
 import { LandingPage } from './pages/LandingPage';
 import AdminPage from './pages/AdminPage';
-import { useUser, useAuth } from '@clerk/clerk-react';
-
-
-const GatewayGuard = () => {
-  const { user, isLoaded: isUserLoaded } = useUser();
-  const { isLoaded: isAuthLoaded } = useAuth();
-
-  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || '';
-  const adminEmails = adminEmail.split(',').map(e => e.trim().toLowerCase());
-  const isAdmin = !!user && adminEmails.includes(user.primaryEmailAddress?.emailAddress?.toLowerCase() || '');
-
-  const isUnlocked = (() => {
-    const unlockTime = localStorage.getItem('nishyash_gateway_unlock');
-    if (!unlockTime) return false;
-
-    const now = Date.now();
-    const twentyFourHours = 24 * 60 * 60 * 1000;
-
-    if (now - Number.parseInt(unlockTime) > twentyFourHours) {
-      localStorage.removeItem('nishyash_gateway_unlock');
-      return false;
-    }
-    return true;
-  })();
-
-  if (!isUserLoaded || !isAuthLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  // Allow admin bypass or session-unlocked users, otherwise redirect to landing page
-  if (isAdmin || isUnlocked) {
-    return <Outlet />;
-  }
-
-  return <Navigate to="/" replace />;
-};
 
 export default function App() {
   return (
@@ -66,9 +25,7 @@ export default function App() {
           {/* Landing Page: Full screen, no Header/Footer */}
           <Route path="/" element={<LandingPage />} />
 
-          {/* Protected Routes: Require Gateway Completion */}
-          <Route element={<GatewayGuard />}>
-            <Route path="/*" element={
+          <Route path="/*" element={
               <div className="min-h-screen flex flex-col">
                 <Header />
                 <main className="flex-1">
@@ -87,9 +44,7 @@ export default function App() {
                 <Footer />
               </div>
             } />
-          </Route>
         </Routes>
-        <ChatBot />
         <Toaster position="top-center" />
       </Router>
     </QuoteProvider>

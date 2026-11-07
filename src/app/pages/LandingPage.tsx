@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
@@ -67,22 +67,8 @@ export function LandingPage() {
     const adminEmails = adminEmail.split(',').map(e => e.trim().toLowerCase());
     const isAdmin = !!user && adminEmails.includes(user.primaryEmailAddress?.emailAddress?.toLowerCase() || '');
 
-    useEffect(() => {
-        const unlockTime = localStorage.getItem('nishyash_gateway_unlock');
-        if (unlockTime) {
-            const now = Date.now();
-            const twentyFourHours = 24 * 60 * 60 * 1000;
-            if (now - Number.parseInt(unlockTime) <= twentyFourHours) {
-                navigate('/home');
-            } else {
-                localStorage.removeItem('nishyash_gateway_unlock');
-            }
-        }
-    }, [navigate]);
-
     const handleBeginJourney = () => {
-        // Always trigger the chatbot
-        globalThis.dispatchEvent(new CustomEvent('open-nishyash-chat'));
+        navigate('/home');
     };
 
     return (
